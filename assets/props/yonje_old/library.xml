@@ -1,0 +1,63 @@
+<library name="yonje Old">	
+	<prop-group name="yonje">
+		<prop name="Door">
+			<mesh file="door.3ds">
+				<texture name="North" diffuse-map="doorn.jpg" />
+				<texture name="South" diffuse-map="doors.jpg" />
+			</mesh>
+		</prop>
+		<prop name="window">
+			<mesh file="window.3ds">
+				<texture name="North" diffuse-map="windown.jpg" />
+				<texture name="West" diffuse-map="windoww.jpg" />
+				<texture name="South" diffuse-map="windows.jpg" />	
+			</mesh>
+		</prop>
+		<prop name="wall">
+			<mesh file="wall.3ds">
+				<texture name="North" diffuse-map="walln.jpg" />
+				<texture name="South" diffuse-map="walls.jpg" />
+			</mesh>
+		</prop>
+		<prop name="outWd">
+			<mesh file="outwd.3ds">
+				<texture name="NorthWest" diffuse-map="outwdnw.jpg" />
+				<texture name="NorthEast" diffuse-map="outwdne.jpg" />
+				<texture name="SouthWest" diffuse-map="outwdsw.jpg" />
+				<texture name="SouthEast" diffuse-map="outwdse.jpg" />
+			</mesh>
+		</prop>
+		<prop name="out">
+			<mesh file="out.3ds">
+				<texture name="NorthWest" diffuse-map="cornernw.jpg" />
+				<texture name="NorthEast" diffuse-map="cornerne.jpg" />
+				<texture name="SouthWest" diffuse-map="cornersw.jpg" />
+				<texture name="SouthEast" diffuse-map="cornerse.jpg" />
+			</mesh>
+		</prop>
+		<prop name="in">
+			<mesh file="in.3ds">
+				<texture name="NorthWest" diffuse-map="cornernw.jpg" />
+				<texture name="NorthEast" diffuse-map="cornerne.jpg" />
+				<texture name="SouthWest" diffuse-map="cornersw.jpg" />
+				<texture name="SouthEast" diffuse-map="cornerse.jpg" />
+			</mesh>
+		</prop>
+		<prop name="End">
+			<mesh file="end.3ds">
+				<texture name="North" diffuse-map="endn.jpg" />
+				<texture name="West" diffuse-map="endw.jpg" />
+				<texture name="South" diffuse-map="ends.jpg" />
+				<texture name="East" diffuse-map="ende.jpg" />
+			</mesh>
+		</prop>
+		<prop name="corner">
+			<mesh file="corner.3ds">
+				<texture name="NorthWest" diffuse-map="cornernw.jpg" />
+				<texture name="NorthEast" diffuse-map="cornerne.jpg" />
+				<texture name="SouthWest" diffuse-map="cornersw.jpg" />
+				<texture name="SouthEast" diffuse-map="cornerse.jpg" />
+			</mesh>
+		</prop>
+	</prop-group>
+</library>

@@ -1,0 +1,186 @@
+{
+  "hulls": [
+    {
+      "id": "Wasp",
+      "mods": {
+        "M0": {
+          "mesh": "/hulls/wasp/m0/mesh.3ds",
+          "lightmap": "/hulls/wasp/m0/lightmap.jpg",
+          "details": "/hulls/wasp/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/hulls/wasp/m1/mesh.3ds",
+          "lightmap": "/hulls/wasp/m1/lightmap.jpg",
+          "details": "/hulls/wasp/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/hulls/wasp/m2/mesh.3ds",
+          "lightmap": "/hulls/wasp/m2/lightmap.jpg",
+          "details": "/hulls/wasp/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/hulls/wasp/m3/mesh.3ds",
+          "lightmap": "/hulls/wasp/m3/lightmap.jpg",
+          "details": "/hulls/wasp/m3/details.png"
+        }
+      },
+      "thumbnail": "/hulls/wasp/preview.png"
+    },
+    {
+      "id": "Hornet",
+      "mods": {
+        "M0": {
+          "mesh": "/hulls/hornet/m0/mesh.3ds",
+          "lightmap": "/hulls/hornet/m0/lightmap.jpg",
+          "details": "/hulls/hornet/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/hulls/hornet/m1/mesh.3ds",
+          "lightmap": "/hulls/hornet/m1/lightmap.jpg",
+          "details": "/hulls/hornet/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/hulls/hornet/m2/mesh.3ds",
+          "lightmap": "/hulls/hornet/m2/lightmap.jpg",
+          "details": "/hulls/hornet/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/hulls/hornet/m3/mesh.3ds",
+          "lightmap": "/hulls/hornet/m3/lightmap.jpg",
+          "details": "/hulls/hornet/m3/details.png"
+        }
+      },
+      "thumbnail": "/hulls/hornet/preview.png"
+    },
+    {
+      "id": "Hunter",
+      "mods": {
+        "M0": {
+          "mesh": "/hulls/hunter/m0/mesh.3ds",
+          "lightmap": "/hulls/hunter/m0/lightmap.jpg",
+          "details": "/hulls/hunter/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/hulls/hunter/m1/mesh.3ds",
+          "lightmap": "/hulls/hunter/m1/lightmap.jpg",
+          "details": "/hulls/hunter/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/hulls/hunter/m2/mesh.3ds",
+          "lightmap": "/hulls/hunter/m2/lightmap.jpg",
+          "details": "/hulls/hunter/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/hulls/hunter/m3/mesh.3ds",
+          "lightmap": "/hulls/hunter/m3/lightmap.jpg",
+          "details": "/hulls/hunter/m3/details.png"
+        }
+      },
+      "thumbnail": "/hulls/hunter/preview.png"
+    },
+    {
+      "id": "Viking",
+      "mods": {
+        "M0": {
+          "mesh": "/hulls/viking/m0/mesh.3ds",
+          "lightmap": "/hulls/viking/m0/lightmap.jpg",
+          "details": "/hulls/viking/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/hulls/viking/m1/mesh.3ds",
+          "lightmap": "/hulls/viking/m1/lightmap.jpg",
+          "details": "/hulls/viking/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/hulls/viking/m2/mesh.3ds",
+          "lightmap": "/hulls/viking/m2/lightmap.jpg",
+          "details": "/hulls/viking/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/hulls/viking/m3/mesh.3ds",
+          "lightmap": "/hulls/viking/m3/lightmap.jpg",
+          "details": "/hulls/viking/m3/details.png"
+        }
+      },
+      "thumbnail": "/hulls/viking/preview.png"
+    },
+    {
+      "id": "Dictator",
+      "mods": {
+        "M0": {
+          "mesh": "/hulls/dictator/m0/mesh.3ds",
+          "lightmap": "/hulls/dictator/m0/lightmap.jpg",
+          "details": "/hulls/dictator/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/hulls/dictator/m1/mesh.3ds",
+          "lightmap": "/hulls/dictator/m1/lightmap.jpg",
+          "details": "/hulls/dictator/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/hulls/dictator/m2/mesh.3ds",
+          "lightmap": "/hulls/dictator/m2/lightmap.jpg",
+          "details": "/hulls/dictator/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/hulls/dictator/m3/mesh.3ds",
+          "lightmap": "/hulls/dictator/m3/lightmap.jpg",
+          "details": "/hulls/dictator/m3/details.png"
+        }
+      },
+      "thumbnail": "/hulls/dictator/preview.png"
+    },
+    {
+      "id": "Titan",
+      "mods": {
+        "M0": {
+          "mesh": "/hulls/titan/m0/mesh.3ds",
+          "lightmap": "/hulls/titan/m0/lightmap.jpg",
+          "details": "/hulls/titan/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/hulls/titan/m1/mesh.3ds",
+          "lightmap": "/hulls/titan/m1/lightmap.jpg",
+          "details": "/hulls/titan/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/hulls/titan/m2/mesh.3ds",
+          "lightmap": "/hulls/titan/m2/lightmap.jpg",
+          "details": "/hulls/titan/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/hulls/titan/m3/mesh.3ds",
+          "lightmap": "/hulls/titan/m3/lightmap.jpg",
+          "details": "/hulls/titan/m3/details.png"
+        }
+      },
+      "thumbnail": "/hulls/titan/preview.png"
+    },
+    {
+      "id": "Mammoth",
+      "mods": {
+        "M0": {
+          "mesh": "/hulls/mamoth/m0/mesh.3ds",
+          "lightmap": "/hulls/mamoth/m0/lightmap.jpg",
+          "details": "/hulls/mamoth/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/hulls/mamoth/m1/mesh.3ds",
+          "lightmap": "/hulls/mamoth/m1/lightmap.jpg",
+          "details": "/hulls/mamoth/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/hulls/mamoth/m2/mesh.3ds",
+          "lightmap": "/hulls/mamoth/m2/lightmap.jpg",
+          "details": "/hulls/mamoth/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/hulls/mamoth/m3/mesh.3ds",
+          "lightmap": "/hulls/mamoth/m3/lightmap.jpg",
+          "details": "/hulls/mamoth/m3/details.png"
+        }
+      },
+      "thumbnail": "/hulls/mamoth/preview.png"
+    }
+  ]
+}

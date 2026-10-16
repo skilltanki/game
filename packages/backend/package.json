@@ -1,0 +1,30 @@
+{
+  "name": "skilltanki-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "SkillTanki backend v3 — self-hosted: Bun + Hono, Redis (rooms, lobby index, pub/sub), MongoDB (room journal), MinIO (assets). Same protocol as apps/server.",
+  "scripts": {
+    "dev": "bun --watch src/index.ts --port=30050 --firstPort",
+    "start": "bun src/index.ts --bootstrap=30050,30051,30052",
+    "start:single": "bun src/index.ts --port=30050 --firstPort",
+    "build": "bun build src/index.ts --target=bun --outdir build --sourcemap=external",
+    "typecheck": "tsc --noEmit",
+    "test:signal": "node scripts/test-signal.mjs http://localhost:30050",
+    "upload-assets": "node scripts/upload-assets.mjs",
+    "services": "docker compose -f docker/docker-compose.yaml up -d"
+  },
+  "dependencies": {
+    "di-kit": "^1.1.1",
+    "functools-kit": "^5.0.0",
+    "hono": "^4.13.0",
+    "ioredis": "^5.6.1",
+    "minio": "^8.0.5",
+    "mongoose": "^8.14.1",
+    "pinolog": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.12",
+    "typescript": "^5.6.0"
+  }
+}

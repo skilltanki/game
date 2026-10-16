@@ -1,0 +1,509 @@
+{
+  "paints": [
+    {
+      "id": "acid",
+      "image": "/paints/acid/image.jpg",
+      "preview": "/paints/acid/preview.png"
+    },
+    {
+      "id": "amilia",
+      "image": "/paints/amilia/image.jpg",
+      "preview": "/paints/amilia/preview.png"
+    },
+    {
+      "id": "anubis",
+      "image": "/paints/anubis/image.jpg",
+      "preview": "/paints/anubis/preview.png"
+    },
+    {
+      "id": "apple",
+      "image": "/paints/apple/image.jpg",
+      "preview": "/paints/apple/preview.png"
+    },
+    {
+      "id": "arab",
+      "image": "/paints/arab/image.jpg",
+      "preview": "/paints/arab/preview.png"
+    },
+    {
+      "id": "barkhan",
+      "image": "/paints/barkhan/image.jpg",
+      "preview": "/paints/barkhan/preview.png"
+    },
+    {
+      "id": "besthelper",
+      "image": "/paints/besthelper/image.jpg",
+      "preview": "/paints/besthelper/preview.png"
+    },
+    {
+      "id": "black",
+      "image": "/paints/black/image.jpg",
+      "preview": "/paints/black/preview.png"
+    },
+    {
+      "id": "blink",
+      "image": "/paints/blink/image.jpg",
+      "preview": "/paints/blink/preview.png"
+    },
+    {
+      "id": "blizzard",
+      "image": "/paints/blizzard/image.jpg",
+      "preview": "/paints/blizzard/preview.png"
+    },
+    {
+      "id": "blue",
+      "image": "/paints/blue/image.jpg",
+      "preview": "/paints/blue/preview.png"
+    },
+    {
+      "id": "blueray",
+      "image": "/paints/blueray/image.jpg",
+      "preview": "/paints/blueray/preview.png"
+    },
+    {
+      "id": "carbon",
+      "image": "/paints/carbon/image.jpg",
+      "preview": "/paints/carbon/preview.png"
+    },
+    {
+      "id": "champion",
+      "image": "/paints/champion/image.jpg",
+      "preview": "/paints/champion/preview.png"
+    },
+    {
+      "id": "clay",
+      "image": "/paints/clay/image.jpg",
+      "preview": "/paints/clay/preview.png"
+    },
+    {
+      "id": "creator",
+      "image": "/paints/creator/image.jpg",
+      "preview": "/paints/creator/preview.png"
+    },
+    {
+      "id": "digital",
+      "image": "/paints/digital/image.jpg",
+      "preview": "/paints/digital/preview.png"
+    },
+    {
+      "id": "dirt",
+      "image": "/paints/dirt/image.jpg",
+      "preview": "/paints/dirt/preview.png"
+    },
+    {
+      "id": "dragon",
+      "image": "/paints/dragon/image.jpg",
+      "preview": "/paints/dragon/preview.png"
+    },
+    {
+      "id": "drug",
+      "image": "/paints/drug/image.jpg",
+      "preview": "/paints/drug/preview.png"
+    },
+    {
+      "id": "electra",
+      "image": "/paints/electra/image.jpg",
+      "preview": "/paints/electra/preview.png"
+    },
+    {
+      "id": "euro2012",
+      "image": "/paints/euro2012/image.jpg",
+      "preview": "/paints/euro2012/preview.png"
+    },
+    {
+      "id": "flame",
+      "image": "/paints/flame/image.jpg",
+      "preview": "/paints/flame/preview.png"
+    },
+    {
+      "id": "flash",
+      "image": "/paints/flash/image.jpg",
+      "preview": "/paints/flash/preview.png"
+    },
+    {
+      "id": "flora",
+      "image": "/paints/flora/image.jpg",
+      "preview": "/paints/flora/preview.png"
+    },
+    {
+      "id": "flow",
+      "image": "/paints/flow/image.jpg",
+      "preview": "/paints/flow/preview.png"
+    },
+    {
+      "id": "flowers",
+      "image": "/paints/flowers/image.jpg",
+      "preview": "/paints/flowers/preview.png"
+    },
+    {
+      "id": "foreign",
+      "image": "/paints/foreign/image.jpg",
+      "preview": "/paints/foreign/preview.png"
+    },
+    {
+      "id": "forester",
+      "image": "/paints/forester/image.jpg",
+      "preview": "/paints/forester/preview.png"
+    },
+    {
+      "id": "galaxy",
+      "image": "/paints/galaxy/image.jpg",
+      "preview": "/paints/galaxy/preview.png"
+    },
+    {
+      "id": "garland",
+      "image": "/paints/garland/image.jpg",
+      "preview": "/paints/garland/preview.png"
+    },
+    {
+      "id": "ginga",
+      "image": "/paints/ginga/image.jpg",
+      "preview": "/paints/ginga/preview.png"
+    },
+    {
+      "id": "green",
+      "image": "/paints/green/image.jpg",
+      "preview": "/paints/green/preview.png"
+    },
+    {
+      "id": "halloween2020",
+      "image": "/paints/halloween2020/image.jpg",
+      "preview": "/paints/halloween2020/preview.png"
+    },
+    {
+      "id": "heartbeat",
+      "image": "/paints/heartbeat/image.jpg",
+      "preview": "/paints/heartbeat/preview.png"
+    },
+    {
+      "id": "helios",
+      "image": "/paints/helios/image.jpg",
+      "preview": "/paints/helios/preview.png"
+    },
+    {
+      "id": "holiday",
+      "image": "/paints/holiday/image.jpg",
+      "preview": "/paints/holiday/preview.png"
+    },
+    {
+      "id": "inferno",
+      "image": "/paints/inferno/image.jpg",
+      "preview": "/paints/inferno/preview.png"
+    },
+    {
+      "id": "irbis",
+      "image": "/paints/irbis/image.jpg",
+      "preview": "/paints/irbis/preview.png"
+    },
+    {
+      "id": "izumurud",
+      "image": "/paints/izumurud/image.jpg",
+      "preview": "/paints/izumurud/preview.png"
+    },
+    {
+      "id": "jaguar",
+      "image": "/paints/jaguar/image.jpg",
+      "preview": "/paints/jaguar/preview.png"
+    },
+    {
+      "id": "kedr",
+      "image": "/paints/kedr/image.jpg",
+      "preview": "/paints/kedr/preview.png"
+    },
+    {
+      "id": "khokhloma",
+      "image": "/paints/khokhloma/image.jpg",
+      "preview": "/paints/khokhloma/preview.png"
+    },
+    {
+      "id": "krio",
+      "image": "/paints/krio/image.jpg",
+      "preview": "/paints/krio/preview.png"
+    },
+    {
+      "id": "lava",
+      "image": "/paints/lava/image.jpg",
+      "preview": "/paints/lava/preview.png"
+    },
+    {
+      "id": "lead",
+      "image": "/paints/lead/image.jpg",
+      "preview": "/paints/lead/preview.png"
+    },
+    {
+      "id": "marine",
+      "image": "/paints/marine/image.jpg",
+      "preview": "/paints/marine/preview.png"
+    },
+    {
+      "id": "marsh",
+      "image": "/paints/marsh/image.jpg",
+      "preview": "/paints/marsh/preview.png"
+    },
+    {
+      "id": "mary",
+      "image": "/paints/mary/image.jpg",
+      "preview": "/paints/mary/preview.png"
+    },
+    {
+      "id": "matrix",
+      "image": "/paints/matrix/image.jpg",
+      "preview": "/paints/matrix/preview.png"
+    },
+    {
+      "id": "metallic",
+      "image": "/paints/metallic/image.jpg",
+      "preview": "/paints/metallic/preview.png"
+    },
+    {
+      "id": "moderator",
+      "image": "/paints/moderator/image.jpg",
+      "preview": "/paints/moderator/preview.png"
+    },
+    {
+      "id": "moonwalker",
+      "image": "/paints/moonwalker/image.jpg",
+      "preview": "/paints/moonwalker/preview.png"
+    },
+    {
+      "id": "needles",
+      "image": "/paints/needles/image.jpg",
+      "preview": "/paints/needles/preview.png"
+    },
+    {
+      "id": "nefrit",
+      "image": "/paints/nefrit/image.jpg",
+      "preview": "/paints/nefrit/preview.png"
+    },
+    {
+      "id": "newyear2020",
+      "image": "/paints/newyear2020/image.jpg",
+      "preview": "/paints/newyear2020/preview.png"
+    },
+    {
+      "id": "newyear2021",
+      "image": "/paints/newyear2021/image.jpg",
+      "preview": "/paints/newyear2021/preview.png"
+    },
+    {
+      "id": "nightcity",
+      "image": "/paints/nightcity/image.jpg",
+      "preview": "/paints/nightcity/preview.png"
+    },
+    {
+      "id": "nightmare",
+      "image": "/paints/nightmare/image.jpg",
+      "preview": "/paints/nightmare/preview.png"
+    },
+    {
+      "id": "orange",
+      "image": "/paints/orange/image.jpg",
+      "preview": "/paints/orange/preview.png"
+    },
+    {
+      "id": "outburst",
+      "image": "/paints/outburst/image.jpg",
+      "preview": "/paints/outburst/preview.png"
+    },
+    {
+      "id": "phenix",
+      "image": "/paints/phenix/image.jpg",
+      "preview": "/paints/phenix/preview.png"
+    },
+    {
+      "id": "plexus",
+      "image": "/paints/plexus/image.jpg",
+      "preview": "/paints/plexus/preview.png"
+    },
+    {
+      "id": "prodigy",
+      "image": "/paints/prodigy/image.jpg",
+      "preview": "/paints/prodigy/preview.png"
+    },
+    {
+      "id": "pumpkins",
+      "image": "/paints/pumpkins/image.jpg",
+      "preview": "/paints/pumpkins/preview.png"
+    },
+    {
+      "id": "punk",
+      "image": "/paints/punk/image.jpg",
+      "preview": "/paints/punk/preview.png"
+    },
+    {
+      "id": "python",
+      "image": "/paints/python/image.jpg",
+      "preview": "/paints/python/preview.png"
+    },
+    {
+      "id": "radiance",
+      "image": "/paints/radiance/image.jpg",
+      "preview": "/paints/radiance/preview.png"
+    },
+    {
+      "id": "red",
+      "image": "/paints/red/image.jpg",
+      "preview": "/paints/red/preview.png"
+    },
+    {
+      "id": "redl",
+      "image": "/paints/redl/image.jpg",
+      "preview": "/paints/redl/preview.png"
+    },
+    {
+      "id": "reporter",
+      "image": "/paints/reporter/image.jpg",
+      "preview": "/paints/reporter/preview.png"
+    },
+    {
+      "id": "rock",
+      "image": "/paints/rock/image.jpg",
+      "preview": "/paints/rock/preview.png"
+    },
+    {
+      "id": "roger",
+      "image": "/paints/roger/image.jpg",
+      "preview": "/paints/roger/preview.png"
+    },
+    {
+      "id": "rosequartz",
+      "image": "/paints/rosequartz/image.jpg",
+      "preview": "/paints/rosequartz/preview.png"
+    },
+    {
+      "id": "rust",
+      "image": "/paints/rust/image.jpg",
+      "preview": "/paints/rust/preview.png"
+    },
+    {
+      "id": "rustle",
+      "image": "/paints/rustle/image.jpg",
+      "preview": "/paints/rustle/preview.png"
+    },
+    {
+      "id": "safari",
+      "image": "/paints/safari/image.jpg",
+      "preview": "/paints/safari/preview.png"
+    },
+    {
+      "id": "savanna",
+      "image": "/paints/savanna/image.jpg",
+      "preview": "/paints/savanna/preview.png"
+    },
+    {
+      "id": "smokescreen",
+      "image": "/paints/smokescreen/image.jpg",
+      "preview": "/paints/smokescreen/preview.png"
+    },
+    {
+      "id": "space",
+      "image": "/paints/space/image.jpg",
+      "preview": "/paints/space/preview.png"
+    },
+    {
+      "id": "spark",
+      "image": "/paints/spark/image.jpg",
+      "preview": "/paints/spark/preview.png"
+    },
+    {
+      "id": "spectator",
+      "image": "/paints/spectator/image.jpg",
+      "preview": "/paints/spectator/preview.png"
+    },
+    {
+      "id": "spectr",
+      "image": "/paints/spectr/image.jpg",
+      "preview": "/paints/spectr/preview.png"
+    },
+    {
+      "id": "spid",
+      "image": "/paints/spid/image.jpg",
+      "preview": "/paints/spid/preview.png"
+    },
+    {
+      "id": "standstone",
+      "image": "/paints/standstone/image.jpg",
+      "preview": "/paints/standstone/preview.png"
+    },
+    {
+      "id": "storm",
+      "image": "/paints/storm/image.jpg",
+      "preview": "/paints/storm/preview.png"
+    },
+    {
+      "id": "surf",
+      "image": "/paints/surf/image.jpg",
+      "preview": "/paints/surf/preview.png"
+    },
+    {
+      "id": "taiga",
+      "image": "/paints/taiga/image.jpg",
+      "preview": "/paints/taiga/preview.png"
+    },
+    {
+      "id": "tester",
+      "image": "/paints/tester/image.jpg",
+      "preview": "/paints/tester/preview.png"
+    },
+    {
+      "id": "thunderstorm",
+      "image": "/paints/thunderstorm/image.jpg",
+      "preview": "/paints/thunderstorm/preview.png"
+    },
+    {
+      "id": "tina",
+      "image": "/paints/tina/image.jpg",
+      "preview": "/paints/tina/preview.png"
+    },
+    {
+      "id": "tot",
+      "image": "/paints/tot/image.jpg",
+      "preview": "/paints/tot/preview.png"
+    },
+    {
+      "id": "triangles",
+      "image": "/paints/triangles/image.jpg",
+      "preview": "/paints/triangles/preview.png"
+    },
+    {
+      "id": "tundra",
+      "image": "/paints/tundra/image.jpg",
+      "preview": "/paints/tundra/preview.png"
+    },
+    {
+      "id": "urban",
+      "image": "/paints/urban/image.jpg",
+      "preview": "/paints/urban/preview.png"
+    },
+    {
+      "id": "virus",
+      "image": "/paints/virus/image.jpg",
+      "preview": "/paints/virus/preview.png"
+    },
+    {
+      "id": "vlastelin",
+      "image": "/paints/vlastelin/image.jpg",
+      "preview": "/paints/vlastelin/preview.png"
+    },
+    {
+      "id": "white",
+      "image": "/paints/white/image.jpg",
+      "preview": "/paints/white/preview.png"
+    },
+    {
+      "id": "witch",
+      "image": "/paints/witch/image.jpg",
+      "preview": "/paints/witch/preview.png"
+    },
+    {
+      "id": "with_love",
+      "image": "/paints/with_love/image.jpg",
+      "preview": "/paints/with_love/preview.png"
+    },
+    {
+      "id": "zeus",
+      "image": "/paints/zeus/image.jpg",
+      "preview": "/paints/zeus/preview.png"
+    }
+  ]
+}

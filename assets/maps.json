@@ -1,0 +1,600 @@
+{
+  "defaultMap": "island_old_summer",
+  "maps": [
+    {
+      "id": "abyss_old_summer",
+      "name": "Abyss",
+      "theme": "summer",
+      "file": "/maps/summer/abyss_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/abyss_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "arena_ii_old_summer",
+      "name": "Arena Ii",
+      "theme": "summer",
+      "file": "/maps/summer/arena_ii_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/arena_ii_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "arena_old_summer",
+      "name": "Arena",
+      "theme": "summer",
+      "skybox": "skybox6",
+      "visual": {
+        "lightColor": "#c7bdab",
+        "shadowColor": "#54646f",
+        "fogColor": "#ddf1ff",
+        "fogAlpha": 0.25,
+        "nearLimit": 5000,
+        "farLimit": 10000,
+        "angleX": -1,
+        "angleZ": -0.5,
+        "dustParticle": "summer",
+        "dustDensity": 0.15,
+        "dustSize": 200,
+        "dustAlpha": 0.75,
+        "dustNearDistance": 5000,
+        "dustFarDistance": 7000
+      },
+      "file": "/maps/summer/arena_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/arena_old_summer.jpg",
+      "supportsCtf": false
+    },
+    {
+      "id": "astrella_old_summer",
+      "name": "Astrella",
+      "theme": "summer",
+      "file": "/maps/summer/astrella_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/astrella_old_summer.jpg",
+      "supportsCtf": false
+    },
+    {
+      "id": "atra_i_old_summer",
+      "name": "Atra I",
+      "theme": "summer",
+      "file": "/maps/summer/atra_i_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/atra_i_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "atra_ii_old_summer",
+      "name": "Atra Ii",
+      "theme": "summer",
+      "file": "/maps/summer/atra_ii_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/atra_ii_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "babylon_old_summer",
+      "name": "Babylon",
+      "theme": "summer",
+      "file": "/maps/summer/babylon_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/babylon_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "barda_old_summer",
+      "name": "Barda",
+      "theme": "summer",
+      "file": "/maps/summer/barda_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/barda_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "berlin_old_summer",
+      "name": "Berlin",
+      "theme": "summer",
+      "skybox": "skybox20",
+      "visual": {
+        "lightColor": "#c7bdab",
+        "shadowColor": "#54646f",
+        "fogColor": "#a0e1ff",
+        "fogAlpha": 0.25,
+        "nearLimit": 5000,
+        "farLimit": 10000,
+        "angleX": -1,
+        "angleZ": -0.5,
+        "dustParticle": "summer",
+        "dustDensity": 0.15,
+        "dustSize": 200,
+        "dustAlpha": 0.75,
+        "dustNearDistance": 5000,
+        "dustFarDistance": 7000
+      },
+      "file": "/maps/summer/berlin_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/berlin_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "bobruisk_old_summer",
+      "name": "Bobruisk",
+      "theme": "summer",
+      "file": "/maps/summer/bobruisk_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/bobruisk_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "boombox_old_summer",
+      "name": "Boombox",
+      "theme": "summer",
+      "file": "/maps/summer/boombox_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/boombox_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "brest_i_old_summer",
+      "name": "Brest I",
+      "theme": "summer",
+      "file": "/maps/summer/brest_i_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/brest_i_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "brest_ii_old_summer",
+      "name": "Brest Ii",
+      "theme": "summer",
+      "file": "/maps/summer/brest_ii_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/brest_ii_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "bridges_old_summer",
+      "name": "Bridges",
+      "theme": "summer",
+      "skybox": "skybox20",
+      "visual": {
+        "lightColor": "#c7bdab",
+        "shadowColor": "#54646f",
+        "fogColor": "#a0e1ff",
+        "fogAlpha": 0.25,
+        "nearLimit": 5000,
+        "farLimit": 10000,
+        "angleX": -1,
+        "angleZ": -2.2200000286102295,
+        "dustParticle": "summer",
+        "dustDensity": 0.15,
+        "dustSize": 200,
+        "dustAlpha": 0.75,
+        "dustNearDistance": 5000,
+        "dustFarDistance": 7000
+      },
+      "file": "/maps/summer/bridges_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/bridges_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "camp_old_summer",
+      "name": "Camp",
+      "theme": "summer",
+      "file": "/maps/summer/camp_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/camp_old_summer.jpg",
+      "supportsCtf": false
+    },
+    {
+      "id": "canyon_old_summer",
+      "name": "Canyon",
+      "theme": "summer",
+      "skybox": "skybox6",
+      "visual": {
+        "lightColor": "#c7bdab",
+        "shadowColor": "#54646f",
+        "fogColor": "#ddf1ff",
+        "fogAlpha": 0.25,
+        "nearLimit": 5000,
+        "farLimit": 10000,
+        "angleX": -1,
+        "angleZ": -0.5,
+        "dustParticle": "summer",
+        "dustDensity": 0.15,
+        "dustSize": 200,
+        "dustAlpha": 0.75,
+        "dustNearDistance": 5000,
+        "dustFarDistance": 7000
+      },
+      "file": "/maps/summer/canyon_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/canyon_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "carousel_old_summer",
+      "name": "Carousel",
+      "theme": "summer",
+      "file": "/maps/summer/carousel_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/carousel_old_summer.jpg",
+      "supportsCtf": false
+    },
+    {
+      "id": "chernobyl_old_summer",
+      "name": "Chernobyl",
+      "theme": "summer",
+      "file": "/maps/summer/chernobyl_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/chernobyl_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "combe_old_summer",
+      "name": "Combe",
+      "theme": "summer",
+      "file": "/maps/summer/combe_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/combe_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "courage_old_summer",
+      "name": "Courage",
+      "theme": "summer",
+      "file": "/maps/summer/courage_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/courage_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "cross_old_summer",
+      "name": "Cross",
+      "theme": "summer",
+      "file": "/maps/summer/cross_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/cross_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "deathtrack_old_summer",
+      "name": "Deathtrack",
+      "theme": "summer",
+      "file": "/maps/summer/deathtrack_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/deathtrack_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "deck-9_old_summer",
+      "name": "Deck 9",
+      "theme": "summer",
+      "file": "/maps/summer/deck-9_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/deck-9_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "desert_old_summer",
+      "name": "Desert",
+      "theme": "summer",
+      "file": "/maps/summer/desert_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/desert_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "duality_old_summer",
+      "name": "Duality",
+      "theme": "summer",
+      "file": "/maps/summer/duality_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/duality_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "duel_old_summer",
+      "name": "Duel",
+      "theme": "summer",
+      "skybox": "skybox20",
+      "visual": {
+        "lightColor": "#c7bdab",
+        "shadowColor": "#54646f",
+        "fogColor": "#a0e1ff",
+        "fogAlpha": 0.25,
+        "nearLimit": 5000,
+        "farLimit": 10000,
+        "angleX": -1,
+        "angleZ": -0.5,
+        "dustParticle": "summer",
+        "dustDensity": 0.15,
+        "dustSize": 200,
+        "dustAlpha": 0.75,
+        "dustNearDistance": 5000,
+        "dustFarDistance": 7000
+      },
+      "file": "/maps/summer/duel_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/duel_old_summer.jpg",
+      "supportsCtf": false
+    },
+    {
+      "id": "dusseldorf_old_summer",
+      "name": "Dusseldorf",
+      "theme": "summer",
+      "file": "/maps/summer/dusseldorf_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/dusseldorf_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "esplanade_old_summer",
+      "name": "Esplanade",
+      "theme": "summer",
+      "file": "/maps/summer/esplanade_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/esplanade_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "farm_old_summer",
+      "name": "Farm",
+      "theme": "summer",
+      "file": "/maps/summer/farm_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/farm_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "forest_old_summer",
+      "name": "Forest",
+      "theme": "summer",
+      "skybox": "skybox20",
+      "visual": {
+        "lightColor": "#c7bdab",
+        "shadowColor": "#54646f",
+        "fogColor": "#a0e1ff",
+        "fogAlpha": 0.25,
+        "nearLimit": 5000,
+        "farLimit": 10000,
+        "angleX": -1,
+        "angleZ": -0.5,
+        "dustParticle": "summer",
+        "dustDensity": 0.15,
+        "dustSize": 200,
+        "dustAlpha": 0.75,
+        "dustNearDistance": 5000,
+        "dustFarDistance": 7000
+      },
+      "file": "/maps/summer/forest_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/forest_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "fort_knox_i_old_summer",
+      "name": "Fort Knox I",
+      "theme": "summer",
+      "file": "/maps/summer/fort_knox_i_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/fort_knox_i_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "fort_knox_ii_old_summer",
+      "name": "Fort Knox Ii",
+      "theme": "summer",
+      "file": "/maps/summer/fort_knox_ii_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/fort_knox_ii_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "fort_knox_iii_old_summer",
+      "name": "Fort Knox Iii",
+      "theme": "summer",
+      "file": "/maps/summer/fort_knox_iii_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/fort_knox_iii_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "garder_old_summer",
+      "name": "Garder",
+      "theme": "summer",
+      "file": "/maps/summer/garder_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/garder_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "gladiator_old_summer",
+      "name": "Gladiator",
+      "theme": "summer",
+      "file": "/maps/summer/gladiator_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/gladiator_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "gravity_old_summer",
+      "name": "Gravity",
+      "theme": "summer",
+      "file": "/maps/summer/gravity_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/gravity_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "gubakha_old_summer",
+      "name": "Gubakha",
+      "theme": "summer",
+      "file": "/maps/summer/gubakha_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/gubakha_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "hangars_old_summer",
+      "name": "Hangars",
+      "theme": "summer",
+      "file": "/maps/summer/hangars_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/hangars_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "highland_i_old_summer",
+      "name": "Highland I",
+      "theme": "summer",
+      "file": "/maps/summer/highland_i_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/highland_i_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "highland_ii_old_summer",
+      "name": "Highland Ii",
+      "theme": "summer",
+      "file": "/maps/summer/highland_ii_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/highland_ii_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "highways_old_summer",
+      "name": "Highways",
+      "theme": "summer",
+      "skybox": "skybox6",
+      "visual": {
+        "lightColor": "#c7bdab",
+        "shadowColor": "#54646f",
+        "fogColor": "#ddf1ff",
+        "fogAlpha": 0.25,
+        "nearLimit": 5000,
+        "farLimit": 10000,
+        "angleX": -1,
+        "angleZ": -0.5,
+        "dustParticle": "summer",
+        "dustDensity": 0.15,
+        "dustSize": 200,
+        "dustAlpha": 0.75,
+        "dustNearDistance": 5000,
+        "dustFarDistance": 7000
+      },
+      "file": "/maps/summer/highways_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/highways_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "hill_old_summer",
+      "name": "Hill",
+      "theme": "summer",
+      "file": "/maps/summer/hill_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/hill_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "industrial_zone_old_summer",
+      "name": "Industrial Zone",
+      "theme": "summer",
+      "file": "/maps/summer/industrial_zone_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/industrial_zone_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "iran_old_summer",
+      "name": "Iran",
+      "theme": "summer",
+      "file": "/maps/summer/iran_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/iran_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "island_old_summer",
+      "name": "Island",
+      "theme": "summer",
+      "skybox": "skybox6",
+      "visual": {
+        "lightColor": "#c7bdab",
+        "shadowColor": "#54646f",
+        "fogColor": "#ddf1ff",
+        "fogAlpha": 0.25,
+        "nearLimit": 5000,
+        "farLimit": 10000,
+        "angleX": -1,
+        "angleZ": -0.5,
+        "dustParticle": "summer",
+        "dustDensity": 0.15,
+        "dustSize": 200,
+        "dustAlpha": 0.75,
+        "dustNearDistance": 5000,
+        "dustFarDistance": 7000
+      },
+      "file": "/maps/summer/island_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/island_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "kingdom_old_summer",
+      "name": "Kingdom",
+      "theme": "summer",
+      "file": "/maps/summer/kingdom_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/kingdom_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "kolhoz_old_summer",
+      "name": "Kolhoz",
+      "theme": "summer",
+      "skybox": "skybox20",
+      "visual": {
+        "lightColor": "#c7bdab",
+        "shadowColor": "#54646f",
+        "fogColor": "#a0e1ff",
+        "fogAlpha": 0.25,
+        "nearLimit": 5000,
+        "farLimit": 10000,
+        "angleX": -1,
+        "angleZ": -0.5,
+        "dustParticle": "summer",
+        "dustDensity": 0.15,
+        "dustSize": 200,
+        "dustAlpha": 0.75,
+        "dustNearDistance": 5000,
+        "dustFarDistance": 7000
+      },
+      "file": "/maps/summer/kolhoz_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/kolhoz_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "kungur_old_summer",
+      "name": "Kungur",
+      "theme": "summer",
+      "file": "/maps/summer/kungur_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/kungur_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "labyrinth_old_summer",
+      "name": "Labyrinth",
+      "theme": "summer",
+      "file": "/maps/summer/labyrinth_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/labyrinth_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "lost_temple_old_summer",
+      "name": "Lost Temple",
+      "theme": "summer",
+      "file": "/maps/summer/lost_temple_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/lost_temple_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "madness_old_summer",
+      "name": "Madness",
+      "theme": "summer",
+      "skybox": "skybox36",
+      "gravity": 500,
+      "visual": {
+        "lightColor": "#c7bdab",
+        "shadowColor": "#54646f",
+        "fogColor": "#a0e1ff",
+        "fogAlpha": 0,
+        "nearLimit": 5000,
+        "farLimit": 10000,
+        "angleX": -1,
+        "angleZ": -0.5,
+        "dustParticle": "summer",
+        "dustDensity": 0.15,
+        "dustSize": 200,
+        "dustAlpha": 0.75,
+        "dustNearDistance": 5000,
+        "dustFarDistance": 7000
+      },
+      "file": "/maps/summer/madness_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/madness_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "magadan_old_summer",
+      "name": "Magadan",
+      "theme": "summer",
+      "file": "/maps/summer/magadan_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/magadan_old_summer.jpg",
+      "supportsCtf": true
+    },
+    {
+      "id": "magistral_old_summer",
+      "name": "Magistral",
+      "theme": "summer",
+      "file": "/maps/summer/magistral_old_summer.xml",
+      "thumbnail": "/thumbnails/maps/magistral_old_summer.jpg",
+      "supportsCtf": true
+    }
+  ]
+}

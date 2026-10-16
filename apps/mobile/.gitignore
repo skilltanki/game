@@ -1,0 +1,5 @@
+node_modules
+dist
+# bench event log written by the dev server (vite.config.ts benchLogPlugin)
+.bench/
+dev-dist

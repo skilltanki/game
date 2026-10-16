@@ -1,0 +1,34 @@
+# The three stores of packages/backend for local development:
+#   docker compose -f docker/docker-compose.yaml up -d      (or `npm run services -w skilltanki-backend`)
+# Redis without a password (CC_REDIS_PASSWORD empty), MongoDB on 27017, MinIO on 9000 (console 9001).
+services:
+  redis:
+    image: redis:7.4.1
+    container_name: skilltanki-redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--save", "60", "1"]
+    volumes:
+      - ./redis_data:/data
+    restart: unless-stopped
+  mongo:
+    image: mongodb/mongodb-community-server:8.0.4-ubi8
+    container_name: skilltanki-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongo_data:/data/db
+    restart: unless-stopped
+  minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    container_name: skilltanki-minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: ["server", "/data", "--console-address", ":9001"]
+    volumes:
+      - ./minio_data:/data
+    restart: unless-stopped

@@ -1,0 +1,23 @@
+node_modules
+.DS_Store
+.playwright-mcp
+# one-off Playwright screenshots (the MCP server saves them to the repo root)
+/shot-*.png
+/editor-*.png
+/game-*.png
+/step[0-9]-*.png
+/floor-placed.png
+/marquee.png
+/new-prop.png
+.wrangler
+.next
+# Build artefacts: the root bundle plus every package's own output.
+/build
+dist/
+out/
+# upload-assets --wrangler: what went up with which md5 (per machine)
+/.r2-upload
+# packages/backend: the compose volumes and the pinolog files
+packages/backend/docker/*_data
+packages/backend/logs
+packages/backend/.env

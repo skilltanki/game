@@ -1,0 +1,23 @@
+{
+  "name": "skilltanki-api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "SkillTanki backend v2 — Cloudflare Worker: lobby + WebRTC signalling (Hono routes, di-kit services, one Durable Object per room)",
+  "scripts": {
+    "dev": "wrangler dev --port 8787",
+    "typecheck": "tsc --noEmit",
+    "test:signal": "node scripts/test-signal.mjs",
+    "upload-assets": "node scripts/upload-assets.mjs",
+    "deploy": "echo 'deploy from the repo root: npm run deploy (wrangler.jsonc there)' && exit 1"
+  },
+  "dependencies": {
+    "di-kit": "^1.1.1",
+    "hono": "^4.13.0"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1152.0",
+    "@cloudflare/workers-types": "^5.20261006.1",
+    "typescript": "^5.6.0"
+  }
+}

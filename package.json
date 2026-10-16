@@ -1,0 +1,25 @@
+{
+  "name": "skilltanki",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:mobile": "npm run dev --workspace skilltanki-mobile",
+    "dev:server": "npm run dev --workspace skilltanki-api",
+    "typecheck": "npm run typecheck --workspace skilltanki-mobile && npm run typecheck --workspace skilltanki-api && npm run typecheck --workspace skilltanki-backend",
+    "test:signal": "npm run test:signal --workspace skilltanki-api",
+    "upload-assets": "node scripts/upload-assets.mjs",
+    "build": "node scripts/build.mjs",
+    "build:mobile": "npm run build --workspace skilltanki-mobile",
+    "deploy": "node scripts/build.mjs && wrangler deploy",
+    "start:build": "wrangler dev -c wrangler.jsonc --port 8790 --var CC_DEV_SEED:1",
+    "dev:backend": "npm run dev --workspace skilltanki-backend",
+    "start:backend": "npm run start --workspace skilltanki-backend",
+    "test:backend": "npm run test:signal --workspace skilltanki-backend"
+  },
+  "devDependencies": {
+    "wrangler": "^4.41.0"
+  }
+}

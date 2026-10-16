@@ -1,0 +1,238 @@
+{
+  "turrets": [
+    {
+      "id": "Smoky",
+      "mods": {
+        "M0": {
+          "mesh": "/turrets/smoky/m0/mesh.3ds",
+          "lightmap": "/turrets/smoky/m0/lightmap.jpg",
+          "details": "/turrets/smoky/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/turrets/smoky/m1/mesh.3ds",
+          "lightmap": "/turrets/smoky/m1/lightmap.jpg",
+          "details": "/turrets/smoky/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/turrets/smoky/m2/mesh.3ds",
+          "lightmap": "/turrets/smoky/m2/lightmap.jpg",
+          "details": "/turrets/smoky/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/turrets/smoky/m3/mesh.3ds",
+          "lightmap": "/turrets/smoky/m3/lightmap.jpg",
+          "details": "/turrets/smoky/m3/details.png"
+        }
+      },
+      "thumbnail": "/turrets/smoky/preview.png"
+    },
+    {
+      "id": "Twins",
+      "mods": {
+        "M0": {
+          "mesh": "/turrets/twins/m0/mesh.3ds",
+          "lightmap": "/turrets/twins/m0/lightmap.jpg",
+          "details": "/turrets/twins/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/turrets/twins/m1/mesh.3ds",
+          "lightmap": "/turrets/twins/m1/lightmap.jpg",
+          "details": "/turrets/twins/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/turrets/twins/m2/mesh.3ds",
+          "lightmap": "/turrets/twins/m2/lightmap.jpg",
+          "details": "/turrets/twins/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/turrets/twins/m3/mesh.3ds",
+          "lightmap": "/turrets/twins/m3/lightmap.jpg",
+          "details": "/turrets/twins/m3/details.png"
+        }
+      },
+      "thumbnail": "/turrets/twins/preview.png"
+    },
+    {
+      "id": "Firebird",
+      "mods": {
+        "M0": {
+          "mesh": "/turrets/firebird/m0/mesh.3ds",
+          "lightmap": "/turrets/firebird/m0/lightmap.jpg",
+          "details": "/turrets/firebird/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/turrets/firebird/m1/mesh.3ds",
+          "lightmap": "/turrets/firebird/m1/lightmap.jpg",
+          "details": "/turrets/firebird/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/turrets/firebird/m2/mesh.3ds",
+          "lightmap": "/turrets/firebird/m2/lightmap.jpg",
+          "details": "/turrets/firebird/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/turrets/firebird/m3/mesh.3ds",
+          "lightmap": "/turrets/firebird/m3/lightmap.jpg",
+          "details": "/turrets/firebird/m3/details.png"
+        }
+      },
+      "thumbnail": "/turrets/firebird/preview.png"
+    },
+    {
+      "id": "Freeze",
+      "mods": {
+        "M0": {
+          "mesh": "/turrets/frezee/m0/mesh.3ds",
+          "lightmap": "/turrets/frezee/m0/lightmap.jpg",
+          "details": "/turrets/frezee/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/turrets/frezee/m1/mesh.3ds",
+          "lightmap": "/turrets/frezee/m1/lightmap.jpg",
+          "details": "/turrets/frezee/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/turrets/frezee/m2/mesh.3ds",
+          "lightmap": "/turrets/frezee/m2/lightmap.jpg",
+          "details": "/turrets/frezee/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/turrets/frezee/m3/mesh.3ds",
+          "lightmap": "/turrets/frezee/m3/lightmap.jpg",
+          "details": "/turrets/frezee/m3/details.png"
+        }
+      },
+      "thumbnail": "/turrets/frezee/preview.png"
+    },
+    {
+      "id": "Isida",
+      "mods": {
+        "M0": {
+          "mesh": "/turrets/isida/m0/mesh.3ds",
+          "lightmap": "/turrets/isida/m0/lightmap.jpg",
+          "details": "/turrets/isida/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/turrets/isida/m1/mesh.3ds",
+          "lightmap": "/turrets/isida/m1/lightmap.jpg",
+          "details": "/turrets/isida/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/turrets/isida/m2/mesh.3ds",
+          "lightmap": "/turrets/isida/m2/lightmap.jpg",
+          "details": "/turrets/isida/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/turrets/isida/m3/mesh.3ds",
+          "lightmap": "/turrets/isida/m3/lightmap.jpg",
+          "details": "/turrets/isida/m3/details.png"
+        }
+      },
+      "thumbnail": "/turrets/isida/preview.png"
+    },
+    {
+      "id": "Ricochet",
+      "mods": {
+        "M0": {
+          "mesh": "/turrets/ricochet/m0/mesh.3ds",
+          "lightmap": "/turrets/ricochet/m0/lightmap.jpg",
+          "details": "/turrets/ricochet/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/turrets/ricochet/m1/mesh.3ds",
+          "lightmap": "/turrets/ricochet/m1/lightmap.jpg",
+          "details": "/turrets/ricochet/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/turrets/ricochet/m2/mesh.3ds",
+          "lightmap": "/turrets/ricochet/m2/lightmap.jpg",
+          "details": "/turrets/ricochet/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/turrets/ricochet/m3/mesh.3ds",
+          "lightmap": "/turrets/ricochet/m3/lightmap.jpg",
+          "details": "/turrets/ricochet/m3/details.png"
+        }
+      },
+      "thumbnail": "/turrets/ricochet/preview.png"
+    },
+    {
+      "id": "Thunder",
+      "mods": {
+        "M0": {
+          "mesh": "/turrets/thunder/m0/mesh.3ds",
+          "lightmap": "/turrets/thunder/m0/lightmap.jpg",
+          "details": "/turrets/thunder/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/turrets/thunder/m1/mesh.3ds",
+          "lightmap": "/turrets/thunder/m1/lightmap.jpg",
+          "details": "/turrets/thunder/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/turrets/thunder/m2/mesh.3ds",
+          "lightmap": "/turrets/thunder/m2/lightmap.jpg",
+          "details": "/turrets/thunder/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/turrets/thunder/m3/mesh.3ds",
+          "lightmap": "/turrets/thunder/m3/lightmap.jpg",
+          "details": "/turrets/thunder/m3/details.png"
+        }
+      },
+      "thumbnail": "/turrets/thunder/preview.png"
+    },
+    {
+      "id": "Railgun",
+      "mods": {
+        "M0": {
+          "mesh": "/turrets/railgun/m0/mesh.3ds",
+          "lightmap": "/turrets/railgun/m0/lightmap.jpg",
+          "details": "/turrets/railgun/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/turrets/railgun/m1/mesh.3ds",
+          "lightmap": "/turrets/railgun/m1/lightmap.jpg",
+          "details": "/turrets/railgun/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/turrets/railgun/m2/mesh.3ds",
+          "lightmap": "/turrets/railgun/m2/lightmap.jpg",
+          "details": "/turrets/railgun/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/turrets/railgun/m3/mesh.3ds",
+          "lightmap": "/turrets/railgun/m3/lightmap.jpg",
+          "details": "/turrets/railgun/m3/details.png"
+        }
+      },
+      "thumbnail": "/turrets/railgun/preview.png"
+    },
+    {
+      "id": "Shaft",
+      "mods": {
+        "M0": {
+          "mesh": "/turrets/shaft/m0/mesh.3ds",
+          "lightmap": "/turrets/shaft/m0/lightmap.jpg",
+          "details": "/turrets/shaft/m0/details.png"
+        },
+        "M1": {
+          "mesh": "/turrets/shaft/m1/mesh.3ds",
+          "lightmap": "/turrets/shaft/m1/lightmap.jpg",
+          "details": "/turrets/shaft/m1/details.png"
+        },
+        "M2": {
+          "mesh": "/turrets/shaft/m2/mesh.3ds",
+          "lightmap": "/turrets/shaft/m2/lightmap.jpg",
+          "details": "/turrets/shaft/m2/details.png"
+        },
+        "M3": {
+          "mesh": "/turrets/shaft/m3/mesh.3ds",
+          "lightmap": "/turrets/shaft/m3/lightmap.jpg",
+          "details": "/turrets/shaft/m3/details.png"
+        }
+      },
+      "thumbnail": "/turrets/shaft/preview.png"
+    }
+  ]
+}

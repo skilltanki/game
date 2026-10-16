@@ -1,0 +1,56 @@
+// PRODUCTION config of the SkillTanki API worker (apps/server): the lobby,
+// the WebRTC signalling, the game assets from R2 and the PWA shell — one origin.
+//   npm run upload-assets   publishes the repo's assets/ into the R2 bucket (once; md5-skip afterwards)
+//   npm run build           assembles build/public: the PWA shell only (a few MB)
+//   npm run deploy          = build, then `wrangler deploy` with this file
+// wrangler compiles the worker from apps/server/src at deploy time. Local
+// development uses apps/server/wrangler.jsonc (same worker, local bucket).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // The workers.dev address is <name>.<account subdomain>.workers.dev and the
+  // account subdomain is "skilltanki": "mobile" gives
+  // https://mobile.skilltanki.workers.dev/ (the owner's choice). The old
+  // desktop backend stays "game" (game.skilltanki.workers.dev).
+  "name": "mobile",
+  "workers_dev": true,
+  "account_id": "40bd90271b5e177c5371e94db8b87a6f",
+  "main": "apps/server/src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "durable_objects": {
+    "bindings": [
+      { "name": "ROOM", "class_name": "RoomObject" },
+      // The lobby index: one object (name "lobby") with every listing — strongly consistent.
+      { "name": "LOBBY_INDEX", "class_name": "LobbyObject" }
+    ]
+  },
+  // SQLite backend from the first migration: it cannot be changed later.
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["RoomObject"] },
+    // v2: the lobby index moved from KV into LobbyObject (migrate/2026-10-15-lobby-index-kv-to-do.mjs).
+    { "tag": "v2", "new_sqlite_classes": ["LobbyObject"] }
+  ],
+  "kv_namespaces": [
+    // Small caches (the minted TURN credentials). The room listings used to live here
+    // (`room:<id>`); they moved into the LOBBY_INDEX Durable Object (migrate/).
+    { "binding": "CACHE", "id": "332f566313d1471080f16d208883829b" }
+  ],
+  // The game assets (~180 MB) live here, never in a deploy.
+  "r2_buckets": [{ "binding": "ASSETS", "bucket_name": "skilltanki-mobile-assets" }],
+  // The PWA shell; everything the worker owns is listed so the edge does not
+  // answer it from the static tree.
+  "assets": {
+    "directory": "build/public",
+    "binding": "SITE",
+    "run_worker_first": ["/api/*", "/ws/*", "/assets/*", "/health_check"]
+  },
+  "vars": {
+    // ICE: Google + Cloudflare STUN and the project's Cloudflare Realtime TURN
+    // key, all baked into apps/server/src/config/params.ts — nothing to set.
+    // Another key: "CC_CF_TURN_KEY_ID" here + `wrangler secret put CC_CF_TURN_API_TOKEN`
+    // ("none" turns the relay off). Another relay: "CC_ICE_TURN_URL" (comma-separated)
+    // + "CC_ICE_TURN_USERNAME" here and `wrangler secret put CC_ICE_TURN_CREDENTIAL`.
+    "CC_EMPTY_GRACE_MS": "60000",
+    "CC_REJOIN_TTL_MS": "120000",
+    "CC_LISTING_STALE_MS": "600000"
+  }
+}

@@ -1,0 +1,47 @@
+<library name="kariz Old">	
+	<prop-group name="kariz">
+		<prop name="kariz">
+			<mesh file="kariz.3ds">	
+				<texture name="roshan" diffuse-map="kariz.jpg" />	
+				<texture name="tarik" diffuse-map="kariz_1.jpg" />
+			</mesh>
+		</prop>
+		<prop name="saraziri">
+			<mesh file="saraziri.3ds">
+				<texture name="roshan" diffuse-map="kariz.jpg" />	
+				<texture name="tarik" diffuse-map="kariz_1.jpg" />
+			</mesh>
+		</prop>
+		<prop name="cheragh">
+			<mesh file="cheragh.3ds"/>	
+		</prop>
+		<prop name="turn">
+			<mesh file="turn.3ds"/>	
+		</prop>
+		<prop name="turn3">
+			<mesh file="turn3.3ds"/>	
+		</prop>
+		<prop name="abrah">
+			<mesh file="abrah.3ds"/>	
+		</prop>
+		<prop name="charchub">
+			<mesh file="charchub.3ds"/>	
+		</prop>
+		<prop name="dar">
+			<mesh file="dar.3ds">
+				<texture name="North" diffuse-map="darn.jpg" />	
+				<texture name="West" diffuse-map="darw.jpg" />
+				<texture name="South" diffuse-map="dars.jpg" />	
+				<texture name="East" diffuse-map="dare.jpg" />				
+			</mesh>
+		</prop>
+		<prop name="dargah">
+			<mesh file="dargah.3ds">
+					<texture name="North" diffuse-map="dargahn.jpg" />	
+					<texture name="West" diffuse-map="dargahw.jpg" />	
+					<texture name="South" diffuse-map="dargahs.jpg" />	
+					<texture name="East" diffuse-map="dargahe.jpg" />						
+			</mesh>
+		</prop>
+	</prop-group>
+</library>
