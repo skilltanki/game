@@ -13,6 +13,7 @@ import type { TeamType } from '../../../../model/BattleConfig';
 import { inject } from '../../core/di';
 import TYPES from '../../core/types';
 import type BattleStateService from '../battle/BattleStateService';
+import type { MapStage } from '../battle/MapStageService';
 import type FlagModeService from '../mode/FlagModeService';
 import type ModeRuleService from '../mode/ModeRuleService';
 import type ScoreService from '../battle/ScoreService';
@@ -29,6 +30,8 @@ export class PerceptionAdapterService {
   private readonly scoreService = inject<ScoreService>(TYPES.scoreService);
 
   private readonly views = new Map<string, TankView>();
+  /** Spawn positions per side, per map stage (a new stage = a new battle). */
+  private readonly spawnCache = new WeakMap<MapStage, Map<TeamType, Vec3Like[]>>();
   private readonly baseSpeeds = new Map<string, number>();
 
   public forget = (actorId: string): void => {
@@ -80,6 +83,7 @@ export class PerceptionAdapterService {
       canSee: (from, target) => this.canSee(actor, from, target),
       flags: () => this.flagViews(),
       spawnCentroid: (team) => this.spawnCentroid(team),
+      spawnPoints: (team) => this.spawnPoints(team),
       groundHeightAt: (x, y, fromZ, depth = 2000) => this.groundHeightAt(x, y, fromZ, depth),
     };
     return perception;
@@ -293,17 +297,33 @@ export class PerceptionAdapterService {
   }
 
   private spawnCentroid(team: TeamType): Vec3Like | null {
-    const points = this.battleStateService.mapStage.spawnPoints.filter((p) => p.type === team);
+    const points = this.spawnPoints(team);
     if (points.length === 0) {
       return null;
     }
     const sum = { x: 0, y: 0, z: 0 };
     for (const p of points) {
-      sum.x += p.position.x;
-      sum.y += p.position.y;
-      sum.z += p.position.z;
+      sum.x += p.x;
+      sum.y += p.y;
+      sum.z += p.z;
     }
     return { x: sum.x / points.length, y: sum.y / points.length, z: sum.z / points.length };
+  }
+
+  /** A side's spawn positions, built once per map stage (every bot asks every decision). */
+  private spawnPoints(team: TeamType): Vec3Like[] {
+    const stage = this.battleStateService.mapStage;
+    let byTeam = this.spawnCache.get(stage);
+    if (byTeam == null) {
+      byTeam = new Map();
+      this.spawnCache.set(stage, byTeam);
+    }
+    let points = byTeam.get(team);
+    if (points == null) {
+      points = stage.spawnPoints.filter((p) => p.type === team).map((p) => ({ x: p.position.x, y: p.position.y, z: p.position.z }));
+      byTeam.set(team, points);
+    }
+    return points;
   }
 }
 

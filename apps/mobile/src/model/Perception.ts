@@ -78,6 +78,8 @@ export interface BotPerception {
   flags(): { red: FlagView; blue: FlagView } | null;
   /** Spawn points of a side, for "where the enemy comes from" heuristics. */
   spawnCentroid(team: TeamType): Vec3Like | null;
+  /** The side's spawn points themselves (map order; the array is shared, never mutate it). */
+  spawnPoints(team: TeamType): Vec3Like[];
   /**
    * Height of the static ground under (x, y), probing down from `fromZ`.
    * null = nothing to stand on within `depth` (water, the void off the map).

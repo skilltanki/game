@@ -36,6 +36,16 @@ const VANTAGE_MIN = 700;
 const VANTAGE_MAX = 2200;
 const VANTAGE_TRIES = 10;
 const VANTAGE_TTL_MS = 5000;
+/**
+ * Flank: a chase to a last-seen point held behind a teammate (the avoidance
+ * decided the hull's move) for this long approaches from another side — a
+ * vantage-like spot around the point — instead of queueing. Babylon TDM: a
+ * column of five on the ramp, the front one shooting, the rest "avoid-tank"
+ * behind it because the sighting they chased sat right behind the front hull.
+ */
+const FLANK_AFTER_MS = 2500;
+const FLANK_ARRIVE = 250;
+const FLANK_KEY = 'flank';
 const EYE_HEIGHT = 120;
 const CHASE_RESUME_DISTANCE = 1800;
 /** Keep-away band against a buffed enemy. */
@@ -180,7 +190,9 @@ export class NavigatorService {
         result = this.hunt(perception, memory, rng, objective.target, objective.mobile === true);
         break;
       case 'goto':
-        result = this.driveTo(perception, memory, rng, objective.point, objective.arriveRadius, false);
+        result = objective.flank
+          ? this.chaseTo(perception, memory, rng, objective.point, objective.arriveRadius)
+          : this.driveTo(perception, memory, rng, objective.point, objective.arriveRadius, false);
         break;
       case 'hold':
         result = this.hold(perception, memory, rng, objective.point, objective.radius);
@@ -227,14 +239,20 @@ export class NavigatorService {
       memory.lastSteerSource = 'keep-away';
       return { move: 0, turn: steer };
     }
-    // No shot from here (the target is below a ledge or up a bank, or the path
-    // to it does not exist): after a moment, go and find a spot that has one.
+    // No shot from here (the target is below a ledge or up a bank, the path
+    // to it does not exist, or a teammate stands in the line of fire and the
+    // avoidance held the hull behind it last tick): after a moment, go and
+    // find a spot that has one. Once started, the clock runs until there is a
+    // shot: a hull queued behind a teammate is held on and off, and a clock
+    // reset by every gap never fired (Babylon TDM: five hulls in a column on
+    // the ramp, only the front one shooting).
     const steep = distance < VANTAGE_NEAR && Math.abs(self.gunElevationTo(target.position)) > MAX_FIRE_ELEVATION;
     const stalled = memory.follower.path?.status === 'partial' || (memory.follower.path == null && memory.follower.retryAfter > perception.now);
-    if (!memory.hasLineOfSight && (steep || stalled)) {
-      if (memory.noShotSince === 0) memory.noShotSince = perception.now;
-    } else {
+    const queued = memory.lastSteerSource === 'avoid-tank';
+    if (memory.hasLineOfSight) {
       memory.noShotSince = 0;
+    } else if (memory.noShotSince === 0 && (steep || stalled || queued)) {
+      memory.noShotSince = perception.now;
     }
     if (memory.noShotSince > 0 && perception.now - memory.noShotSince > VANTAGE_AFTER_MS) {
       const vantage = this.vantageFor(perception, memory, rng, target);
@@ -300,6 +318,60 @@ export class NavigatorService {
       }
       memory.jinkSide = -memory.jinkSide;
       memory.jinkUntil = now + JINK_LEG_MS;
+    }
+    return null;
+  }
+
+  /** See FLANK_*: a goto to a last-seen point that goes round a teammate in the way after a wait. */
+  private chaseTo(perception: BotPerception, memory: BotMemory, rng: Rng, point: Vec3Like, arriveRadius: number): SteerResult {
+    const now = perception.now;
+    const self = perception.self;
+    // On a flank already: finish it (or let it go stale), then chase the point itself.
+    if (memory.vantageFor === FLANK_KEY && memory.vantagePoint != null) {
+      if (now - memory.vantageAt < VANTAGE_TTL_MS && flatDistance(self.position, memory.vantagePoint) > FLANK_ARRIVE) {
+        return this.driveTo(perception, memory, rng, memory.vantagePoint, FLANK_ARRIVE, false);
+      }
+      memory.vantagePoint = null;
+      memory.vantageFor = null;
+      memory.follower.reset();
+    }
+    const queued = memory.lastSteerSource === 'avoid-tank';
+    if (!queued) {
+      memory.queuedSince = 0;
+    } else if (memory.queuedSince === 0) {
+      memory.queuedSince = now;
+    } else if (now - memory.queuedSince >= FLANK_AFTER_MS) {
+      memory.queuedSince = 0;
+      const flank = this.flankFor(perception, rng, point);
+      if (flank != null) {
+        memory.vantagePoint = flank;
+        memory.vantageFor = FLANK_KEY;
+        memory.vantageAt = now;
+        memory.follower.reset();
+        return this.driveTo(perception, memory, rng, flank, FLANK_ARRIVE, false);
+      }
+    }
+    return this.driveTo(perception, memory, rng, point, arriveRadius, false);
+  }
+
+  /** A reachable spot VANTAGE_MIN..VANTAGE_MAX from `point` with a line of sight to it, off the line the hull is on. */
+  private flankFor(perception: BotPerception, rng: Rng, point: Vec3Like): Vec3Like | null {
+    const self = perception.self;
+    const eye = { x: 0, y: 0, z: 0 };
+    const aim = { x: point.x, y: point.y, z: point.z + 60 };
+    const out = { x: 0, y: 0, z: 0 };
+    const toPoint = Math.atan2(point.y - self.position.y, point.x - self.position.x);
+    for (let i = 0; i < VANTAGE_TRIES; i++) {
+      if (!this.navQueryService.randomReachable(point, VANTAGE_MIN, VANTAGE_MAX, rng, out)) continue;
+      // Not the side the queue is on: the spot has to sit at least 60° off the hull's own line to the point.
+      const fromPoint = Math.atan2(out.y - point.y, out.x - point.x);
+      const off = fromPoint - toPoint - Math.PI;
+      if (Math.abs(Math.atan2(Math.sin(off), Math.cos(off))) < Math.PI / 3) continue;
+      eye.x = out.x;
+      eye.y = out.y;
+      eye.z = out.z + EYE_HEIGHT;
+      if (!perception.hasLineOfSight(eye, aim)) continue;
+      return { x: out.x, y: out.y, z: out.z };
     }
     return null;
   }

@@ -52,6 +52,8 @@ export class BotMemory {
   vantageAt = 0;
   /** Sim time since the chase has had no shot and no progress (0 = fine). */
   noShotSince = 0;
+  /** Sim time since a flank chase (goto with `flank`) has been held behind a teammate (0 = moving). */
+  queuedSince = 0;
   /** Right of way: after giving way the hull waits until this time for the other to pass (no approach-yield-approach loop). */
   yieldUntil = 0;
   yieldTo: string | null = null;
@@ -118,6 +120,7 @@ export class BotMemory {
     this.vantagePoint = null;
     this.vantageFor = null;
     this.noShotSince = 0;
+    this.queuedSince = 0;
     this.yieldUntil = 0;
     this.yieldTo = null;
     this.vetoCount = 0;

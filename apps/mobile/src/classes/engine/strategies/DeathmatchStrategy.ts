@@ -5,7 +5,7 @@ import type { BotStrategy } from './BotStrategy';
 import type { BotMemory } from '../BotMemory';
 import type { BotPerception, TankView } from '../../../model/Perception';
 import type { Objective } from '../../../model/Objective';
-import type { TeamContext } from '../../../model/engine/Tactics';
+import type { KnownEnemy, TeamContext } from '../../../model/engine/Tactics';
 
 export function nearestEnemy(perception: BotPerception, preferVisible = true): TankView | null {
   const self = perception.self;
@@ -26,13 +26,17 @@ export function nearestEnemy(perception: BotPerception, preferVisible = true): T
 
 /** Hunt the nearest known enemy: live when visible, its last position when not. */
 export function huntKnown(team: TeamContext): Objective | null {
-  const known = team.knownEnemies();
+  return huntAmong(team.knownEnemies());
+}
+
+/** The same over a chosen subset of the team's knowledge (nearest first, as knownEnemies lists them). */
+export function huntAmong(known: KnownEnemy[]): Objective | null {
   if (known.length === 0) return null;
   const target = known.find((k) => k.visible) ?? known[0];
   if (target.visible) {
     return { kind: 'hunt', target: target.view };
   }
-  return { kind: 'goto', point: { ...target.lastSeen }, engage: true, arriveRadius: 400 };
+  return { kind: 'goto', point: { ...target.lastSeen }, engage: true, arriveRadius: 400, flank: true };
 }
 
 export class DeathmatchStrategy implements BotStrategy {

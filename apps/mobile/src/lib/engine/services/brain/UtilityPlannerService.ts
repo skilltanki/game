@@ -121,7 +121,13 @@ export class UtilityPlannerService {
     const len = Math.hypot(dx, dy);
     if (len < 400) return { kind: 'hold', point: home, radius: 600 };
     const k = Math.min(1, RETREAT_DISTANCE / len);
-    return { kind: 'goto', point: { x: self.position.x + dx * k, y: self.position.y + dy * k, z: self.position.z }, engage: true, arriveRadius: 300 };
+    const point = { x: self.position.x + dx * k, y: self.position.y + dy * k, z: self.position.z };
+    // As the crow flies may be off the floor (Babylon: the plateau's edge): then home itself, by the path.
+    const grid = this.navQueryService.current;
+    if (grid != null && grid.nearestPassable(point.x, point.y, point.z) < 0) {
+      return { kind: 'goto', point: home, engage: true, arriveRadius: 300 };
+    }
+    return { kind: 'goto', point, engage: true, arriveRadius: 300 };
   }
 
   /** Wait somewhere between the flags for the enemy to come past. */
