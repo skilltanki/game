@@ -315,25 +315,31 @@ export class HitEffects {
   /**
    * Turns a quad toward the camera.
    *
+   * The plane primitive lies in its local XZ plane, normal on +Y. Under
+   * simRoot (Z-up) that means an UNROTATED quad already stands vertical,
+   * facing sim +Y: a yaw about Z turns it to the camera and a tilt about X by
+   * the camera's elevation completes the billboard. The earlier 90 - pitch
+   * was a Y-up reflex — at eye level it tilted the quad a full 90 degrees,
+   * laying it flat on the ground (measured 67..87 degrees between the quad
+   * normal and the camera direction; a sprite seen nearly edge-on).
+   *
    * `upright` billboards around the vertical axis ONLY (yaw, no pitch): a
    * mushroom cloud stands on the ground, and tilting it to face the camera
    * head-on lays it over so it reads as a flat smudge floating in the sky.
    * Round puffs (hits, smoke) have no up, so they take the full billboard.
    */
   private faceCamera(entity: pc.Entity, camSimPos: pc.Vec3, upright = false): void {
-    // Plane is +Y-up in local space: yaw around sim Z, then tilt by pitch
     const p = entity.getLocalPosition();
-    const angle = Math.atan2(-(camSimPos.x - p.x), camSimPos.y - p.y);
+    const yaw = (Math.atan2(-(camSimPos.x - p.x), camSimPos.y - p.y) * 180) / Math.PI;
     if (upright) {
-      // Stand the plane up (90 deg about X) and only spin it to face the camera.
-      entity.setLocalEulerAngles(90, 0, (angle * 180) / Math.PI);
+      entity.setLocalEulerAngles(0, 0, yaw);
       return;
     }
     const dx = camSimPos.x - p.x;
     const dy = camSimPos.y - p.y;
     const horizontal = Math.sqrt(dx * dx + dy * dy);
-    const pitch = Math.atan2(camSimPos.z - p.z, horizontal);
-    entity.setLocalEulerAngles(90 - (pitch * 180) / Math.PI, 0, (angle * 180) / Math.PI);
+    const pitch = (Math.atan2(camSimPos.z - p.z, horizontal) * 180) / Math.PI;
+    entity.setLocalEulerAngles(pitch, 0, yaw);
   }
 
   /** Per-frame: advance frames/fade, face the camera (camSimPos in sim space). */

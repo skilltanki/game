@@ -234,6 +234,7 @@ export class IsidaBeam {
     const dy = camSimPos.y - y;
     const yaw = Math.atan2(-dx, dy);
     const pitch = Math.atan2(camSimPos.z - z, Math.sqrt(dx * dx + dy * dy));
-    entity.setLocalEulerAngles(90 - (pitch * 180) / Math.PI, 0, (yaw * 180) / Math.PI);
+    // Unrotated, the plane stands vertical facing sim +Y (see HitEffects.faceCamera)
+    entity.setLocalEulerAngles((pitch * 180) / Math.PI, 0, (yaw * 180) / Math.PI);
   }
 }

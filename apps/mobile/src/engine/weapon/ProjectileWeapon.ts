@@ -145,25 +145,31 @@ export class ProjectileWeapon implements Weapon {
     return { entity, spriteMaterial: material };
   }
 
+  private readonly _billboardQuat = new pc.Quat();
+  private readonly _spinQuat = new pc.Quat();
+
   /** Called from the render loop: turn every shell sprite toward the camera. */
   updateBillboards(camSimPos: { x: number; y: number; z: number }): void {
     for (const projectile of this.projectiles) {
       if (projectile.spriteMaterial == null) {
         continue;
       }
-      // Same math as HitEffects.faceCamera: plane is +Y-up in local space
+      // Same math as HitEffects.faceCamera: unrotated, the plane stands
+      // vertical facing sim +Y; yaw about Z, elevation about X.
       const p = projectile.position;
       const dx = camSimPos.x - p.x;
       const dy = camSimPos.y - p.y;
       const yaw = Math.atan2(-dx, dy);
       const horizontal = Math.sqrt(dx * dx + dy * dy);
       const pitch = Math.atan2(camSimPos.z - p.z, horizontal);
-      // PlasmaShot.render: the sprite also spins about the view axis
-      projectile.entity.setLocalEulerAngles(
-        90 - (pitch * 180) / Math.PI,
-        (projectile.spin * 180) / Math.PI,
-        (yaw * 180) / Math.PI,
-      );
+      this._billboardQuat.setFromEulerAngles((pitch * 180) / Math.PI, 0, (yaw * 180) / Math.PI);
+      // PlasmaShot.render: the sprite also spins about the VIEW axis, i.e.
+      // about the plane's own normal (local +Y). Applied first, in local
+      // space, so it stays a spin whatever the billboard's tilt (a Y euler
+      // between X and Z turned it about the WORLD Y instead).
+      this._spinQuat.setFromAxisAngle(pc.Vec3.UP, (projectile.spin * 180) / Math.PI);
+      this._billboardQuat.mul(this._spinQuat);
+      projectile.entity.setLocalRotation(this._billboardQuat);
       // PlasmaShot.render: alpha ramps down over the last ALPHA_FADE_DISTANCE
       const fade = this.spec.alphaFadeDistance;
       if (fade != null && fade > 0) {

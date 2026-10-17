@@ -152,12 +152,14 @@ export class LaserSight {
       const endY = this._muzzle.y + d.y * (length - 2);
       const endZ = this._muzzle.z + d.z * (length - 2);
       this.spot.setLocalPosition(endX, endY, endZ);
-      // Spherical billboard toward the camera (plane is +Y-up in local space)
+      // Spherical billboard toward the camera: unrotated, the plane stands
+      // vertical facing sim +Y, so yaw about Z plus the elevation about X
+      // (see HitEffects.faceCamera)
       const dx = camSimPos.x - endX;
       const dy = camSimPos.y - endY;
       const spotYaw = Math.atan2(-dx, dy);
       const spotPitch = Math.atan2(camSimPos.z - endZ, Math.sqrt(dx * dx + dy * dy));
-      this.spot.setLocalEulerAngles(90 - (spotPitch * 180) / Math.PI, 0, (spotYaw * 180) / Math.PI);
+      this.spot.setLocalEulerAngles((spotPitch * 180) / Math.PI, 0, (spotYaw * 180) / Math.PI);
     } else {
       this.spot.enabled = false;
     }
