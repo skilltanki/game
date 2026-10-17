@@ -72,7 +72,7 @@
       "theme": "summer",
       "file": "/maps/summer/babylon_old_summer.xml",
       "thumbnail": "/thumbnails/maps/babylon_old_summer.jpg",
-      "supportsCtf": true
+      "supportsCtf": false
     },
     {
       "id": "barda_old_summer",
