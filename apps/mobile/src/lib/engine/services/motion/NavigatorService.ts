@@ -109,6 +109,8 @@ const GUARD_DZ_BASE = 150;
 const GUARD_DZ_PER_UNIT = 1.2;
 /** ...that is at least this many cells from void or a wall (1 = the hull centre stays >= 150 away). */
 const GUARD_CLEARANCE = 1;
+/** See groundStep: throttle of the off-grid crawl. */
+const GROUND_STEP_THROTTLE = 0.35;
 /**
  * Hull corners: the front corners sit (±150, 250) from the centre, so a cell
  * 330 out at ±0.5 rad is where a corner lands next. A corner over a wall
@@ -545,6 +547,20 @@ export class NavigatorService {
     return false;
   }
 
+  /** Off the grid: a crawl ahead (or back) when the ground ray finds floor within PROBE_DROP there, else nothing. */
+  private groundStep(perception: BotPerception, heading: number, sign: 1 | -1): number {
+    const p = perception.self.position;
+    const drop = (a: number): number | null => {
+      const ground = perception.groundHeightAt(p.x - Math.sin(a) * PROBE_NEAR, p.y + Math.cos(a) * PROBE_NEAR, p.z + PROBE_UP, PROBE_UP + PROBE_DROP);
+      return ground == null ? null : p.z - ground;
+    };
+    const ahead = drop(heading);
+    if (ahead != null && ahead < PROBE_DROP) return GROUND_STEP_THROTTLE * sign;
+    const behind = drop(heading + Math.PI);
+    if (behind != null && behind < PROBE_DROP) return -GROUND_STEP_THROTTLE * sign;
+    return 0;
+  }
+
   /** True when the hull's own cell touches a drop (clearance <= 1). */
   private onEdgeCell(perception: BotPerception): boolean {
     const grid = this.navQueryService.current;
@@ -684,13 +700,17 @@ export class NavigatorService {
       // Corners: a fence beside the nose is cleared by yawing away from it, not by pushing on.
       const here = grid != null ? grid.nodeAt(p.x, p.y, p.z) : -1;
       if (grid != null && here >= 0) {
+        // Off the graph (an edge cell on a rim, a rock top: no edges lead anywhere)
+        // the reach test can only fail; the probes alone decide then — kolhoz: a hull
+        // on the tunnel's lip with clear floor ahead stood pivoting on the spot for good.
+        const anchored = grid.isPassable(here);
         const cornerClear = (angleOffset: number): boolean => {
           const a = heading + angleOffset;
           const node = grid.nodeAt(p.x - Math.sin(a) * CORNER_DISTANCE, p.y + Math.cos(a) * CORNER_DISTANCE, p.z, GUARD_DZ_BASE + CORNER_DISTANCE * GUARD_DZ_PER_UNIT);
           if (node < 0 || !grid.isFloor(node) || grid.nodeClearance[node] < GUARD_CLEARANCE) return false;
           // The lookup may land on a rock's TOP (a floor 375 up): only a cell the
           // hull can actually drive to within a few edges counts as clear.
-          return grid.nodeWallClearance[node] >= 1 && this.connected(grid, here, node, CORNER_REACH_EDGES);
+          return grid.nodeWallClearance[node] >= 1 && (!anchored || this.connected(grid, here, node, CORNER_REACH_EDGES));
         };
         const leftClear = cornerClear(CORNER_ANGLE);
         const rightClear = cornerClear(-CORNER_ANGLE);
@@ -702,7 +722,8 @@ export class NavigatorService {
         }
         if (!leftClear && !rightClear) {
           memory.lastSteerSource = 'avoid-wall';
-          return { move: safe(Math.PI, PROBE_NEAR) ? -0.6 * sign : 0, turn: steer.turn >= 0 ? 1 : -1 };
+          // Nowhere to back into: creep on with full lock (the probes ahead passed; a standing hull does not pivot at all).
+          return { move: safe(Math.PI, PROBE_NEAR) ? -0.6 * sign : CORNER_THROTTLE * sign, turn: steer.turn >= 0 ? 1 : -1 };
         }
         // Side walls: a wall right beside the hull (DM on kolhoz: hulls wedged
         // along building walls at full throttle) — never yaw into it, and
@@ -710,7 +731,7 @@ export class NavigatorService {
         const sideClear = (angleOffset: number): boolean => {
           const a = heading + angleOffset;
           const node = grid.nodeAt(p.x - Math.sin(a) * SIDE_DISTANCE, p.y + Math.cos(a) * SIDE_DISTANCE, p.z, GUARD_DZ_BASE + SIDE_DISTANCE * GUARD_DZ_PER_UNIT);
-          return node >= 0 && grid.isFloor(node) && grid.nodeWallClearance[node] >= 1 && this.connected(grid, here, node, CORNER_REACH_EDGES);
+          return node >= 0 && grid.isFloor(node) && grid.nodeWallClearance[node] >= 1 && (!anchored || this.connected(grid, here, node, CORNER_REACH_EDGES));
         };
         const leftSide = sideClear(SIDE_ANGLE);
         const rightSide = sideClear(-SIDE_ANGLE);
@@ -771,7 +792,11 @@ export class NavigatorService {
     } else {
       const backSafe = safe(Math.PI, PROBE_NEAR);
       memory.dropAvoidTurn = steer.turn >= 0 ? 1 : -1;
-      memory.dropAvoidMove = backSafe ? -0.6 * sign : 0;
+      // Nothing on the grid in any direction (a rim, a hollow off the graph): the
+      // ground ray decides — a step that lands on ground within PROBE_DROP is a
+      // crawl, not a stand (kolhoz: a hull that slid off the tunnel's lip stood
+      // pivoting at zero throttle until it was shot).
+      memory.dropAvoidMove = backSafe ? -0.6 * sign : this.groundStep(perception, heading, sign);
     }
     // The path stays: the guard only vetoes this moment's move, and the
     // follower picks the route back up once the probes clear (throwing the
