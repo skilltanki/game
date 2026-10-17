@@ -566,7 +566,7 @@ export class NavigatorService {
     const grid = this.navQueryService.current;
     if (grid == null) return false;
     const p = perception.self.position;
-    const node = grid.nodeAt(p.x, p.y, p.z);
+    const node = grid.standAt(p.x, p.y, p.z);
     return node >= 0 && grid.nodeClearance[node] <= 1;
   }
 
@@ -575,7 +575,7 @@ export class NavigatorService {
     const grid = this.navQueryService.current;
     if (grid == null) return false;
     const p = perception.self.position;
-    const node = grid.nodeAt(p.x, p.y, p.z);
+    const node = grid.standAt(p.x, p.y, p.z);
     return node >= 0 && grid.isMarginal(node);
   }
 
@@ -613,7 +613,7 @@ export class NavigatorService {
     const uy = dy / Math.hypot(dx, dy);
     let z = from.z;
     for (let d = STRAIGHT_STEP; d <= length; d += STRAIGHT_STEP) {
-      const node = grid.nodeAt(from.x + ux * d, from.y + uy * d, z, GUARD_DZ_BASE + STRAIGHT_STEP * GUARD_DZ_PER_UNIT);
+      const node = grid.standAt(from.x + ux * d, from.y + uy * d, z, GUARD_DZ_BASE + STRAIGHT_STEP * GUARD_DZ_PER_UNIT);
       if (node < 0 || !grid.isFloor(node) || grid.nodeClearance[node] < GUARD_CLEARANCE || grid.nodeWallClearance[node] < 1) return false;
       z = grid.nodeZ[node];
     }
@@ -639,16 +639,32 @@ export class NavigatorService {
    * refusing to move onto a cell that is not a floor well inside the map.
    */
   private avoidDrops(perception: BotPerception, memory: BotMemory, steer: SteerResult): SteerResult {
-    if (steer.move === 0) {
-      return steer;
-    }
     const self = perception.self;
     const p = self.position;
+    // Checked before the "standing" shortcut: a hull holding its ground at the brink sinks all the same.
     if (perception.groundHeightAt(p.x, p.y, p.z + PROBE_UP, PROBE_UP + PROBE_DROP) == null) {
+      // The hull's centre is over water (or the void): the tracks still grip the
+      // shore for a couple of seconds, so back straight out onto whichever end has
+      // ground, nose first if only the front does. Releasing the move here (the
+      // old "nothing under me, nothing to do") let the follower and the tank
+      // avoidance drive on at half throttle while the hull sank — island CTF:
+      // every drowning in the trail logs, 3 s each from the brink to the kill line.
+      const ground = (a: number): boolean => perception.groundHeightAt(p.x - Math.sin(a) * PROBE_NEAR, p.y + Math.cos(a) * PROBE_NEAR, p.z + PROBE_UP, PROBE_UP + PROBE_DROP) != null;
+      memory.lastSteerSource = 'avoid-drop';
+      memory.lastVeto = 'afloat';
+      if (ground(self.heading + Math.PI)) return { move: -1, turn: 0 };
+      if (ground(self.heading)) return { move: 1, turn: 0 };
+      return steer;
+    }
+    const speed = Math.hypot(self.velocity.x, self.velocity.y);
+    // Standing still is nothing to guard — unless the hull is still moving: a
+    // full-lock turn at zero throttle (the tank avoidance's crawl-turn) at 270
+    // u/s swept a hull over the ramp's edge on atra_ii; below, `sliding`
+    // probes along the velocity and brakes.
+    if (steer.move === 0 && speed <= SLIDE_SPEED) {
       return steer;
     }
     const grid = this.navQueryService.current;
-    const speed = Math.hypot(self.velocity.x, self.velocity.y);
     const commandSign: 1 | -1 = steer.move > 0 ? 1 : -1;
     const velocityYaw = Math.atan2(-self.velocity.x, self.velocity.y);
     const slip = Math.abs(Math.atan2(Math.sin(velocityYaw - self.heading), Math.cos(velocityYaw - self.heading)));
@@ -662,7 +678,7 @@ export class NavigatorService {
       const x = p.x - Math.sin(a) * distance;
       const y = p.y + Math.cos(a) * distance;
       if (grid != null) {
-        const node = grid.nodeAt(x, y, p.z, GUARD_DZ_BASE + distance * GUARD_DZ_PER_UNIT);
+        const node = grid.standAt(x, y, p.z, GUARD_DZ_BASE + distance * GUARD_DZ_PER_UNIT);
         const tag = `${angleOffset.toFixed(1)}@${Math.round(distance)}`;
         if (node < 0) {
           memory.lastVeto = `${tag}:none`;
@@ -698,7 +714,7 @@ export class NavigatorService {
     if (front) {
       memory.dropAvoidUntil = 0;
       // Corners: a fence beside the nose is cleared by yawing away from it, not by pushing on.
-      const here = grid != null ? grid.nodeAt(p.x, p.y, p.z) : -1;
+      const here = grid != null ? grid.standAt(p.x, p.y, p.z) : -1;
       if (grid != null && here >= 0) {
         // Off the graph (an edge cell on a rim, a rock top: no edges lead anywhere)
         // the reach test can only fail; the probes alone decide then — kolhoz: a hull
@@ -706,7 +722,7 @@ export class NavigatorService {
         const anchored = grid.isPassable(here);
         const cornerClear = (angleOffset: number): boolean => {
           const a = heading + angleOffset;
-          const node = grid.nodeAt(p.x - Math.sin(a) * CORNER_DISTANCE, p.y + Math.cos(a) * CORNER_DISTANCE, p.z, GUARD_DZ_BASE + CORNER_DISTANCE * GUARD_DZ_PER_UNIT);
+          const node = grid.standAt(p.x - Math.sin(a) * CORNER_DISTANCE, p.y + Math.cos(a) * CORNER_DISTANCE, p.z, GUARD_DZ_BASE + CORNER_DISTANCE * GUARD_DZ_PER_UNIT);
           if (node < 0 || !grid.isFloor(node) || grid.nodeClearance[node] < GUARD_CLEARANCE) return false;
           // The lookup may land on a rock's TOP (a floor 375 up): only a cell the
           // hull can actually drive to within a few edges counts as clear.
@@ -730,7 +746,7 @@ export class NavigatorService {
         // do not run flat out along it.
         const sideClear = (angleOffset: number): boolean => {
           const a = heading + angleOffset;
-          const node = grid.nodeAt(p.x - Math.sin(a) * SIDE_DISTANCE, p.y + Math.cos(a) * SIDE_DISTANCE, p.z, GUARD_DZ_BASE + SIDE_DISTANCE * GUARD_DZ_PER_UNIT);
+          const node = grid.standAt(p.x - Math.sin(a) * SIDE_DISTANCE, p.y + Math.cos(a) * SIDE_DISTANCE, p.z, GUARD_DZ_BASE + SIDE_DISTANCE * GUARD_DZ_PER_UNIT);
           return node >= 0 && grid.isFloor(node) && grid.nodeWallClearance[node] >= 1 && (!anchored || this.connected(grid, here, node, CORNER_REACH_EDGES));
         };
         const leftSide = sideClear(SIDE_ANGLE);
@@ -778,17 +794,23 @@ export class NavigatorService {
     this.noteVeto(perception, memory, heading);
     const left = safe(PROBE_ANGLE, PROBE_NEAR) && safe(PROBE_ANGLE, far);
     const right = safe(-PROBE_ANGLE, PROBE_NEAR) && safe(-PROBE_ANGLE, far);
+    // The edge right under the nose (the NEAR probe failed, not only the far
+    // one): swinging forward toward the free side still sweeps the nose over
+    // it — back off with the same yaw instead when the tail has room (atra_ii:
+    // a hull crept off the ramp at 0.45 forward with full lock).
+    const nearBlocked = !safe(0, PROBE_NEAR);
+    const retreat = nearBlocked && safe(Math.PI, PROBE_NEAR) ? -0.45 : 0.45;
     memory.dropAvoidUntil = perception.now + 500;
     memory.lastSteerSource = 'avoid-drop';
     if (left && !right) {
       memory.dropAvoidTurn = sign;
-      memory.dropAvoidMove = 0.45 * sign;
+      memory.dropAvoidMove = retreat * sign;
     } else if (right && !left) {
       memory.dropAvoidTurn = (-sign) as 1 | -1;
-      memory.dropAvoidMove = 0.45 * sign;
+      memory.dropAvoidMove = retreat * sign;
     } else if (left && right) {
       memory.dropAvoidTurn = ((steer.turn >= 0 ? 1 : -1) * sign) as 1 | -1;
-      memory.dropAvoidMove = 0.45 * sign;
+      memory.dropAvoidMove = retreat * sign;
     } else {
       const backSafe = safe(Math.PI, PROBE_NEAR);
       memory.dropAvoidTurn = steer.turn >= 0 ? 1 : -1;

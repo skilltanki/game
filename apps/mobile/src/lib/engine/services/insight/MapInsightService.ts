@@ -107,7 +107,7 @@ export class MapInsightService {
     let width = 1;
     for (const side of [1, -1]) {
       for (let k = 1; k <= CHOKE_PROBE_CELLS; k++) {
-        const node = grid.nodeAt(p.x + nx * side * k * grid.cellSize, p.y + ny * side * k * grid.cellSize, p.z, 250);
+        const node = grid.standAt(p.x + nx * side * k * grid.cellSize, p.y + ny * side * k * grid.cellSize, p.z, 250);
         if (node < 0 || !grid.isPassable(node)) break;
         width++;
       }

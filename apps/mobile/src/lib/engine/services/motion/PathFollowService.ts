@@ -93,7 +93,7 @@ export class PathFollowService {
     }
 
     const speed = Math.hypot(self.velocity.x, self.velocity.y);
-    const here = grid != null ? grid.nodeAt(pos.x, pos.y, pos.z) : -1;
+    const here = grid != null ? grid.standAt(pos.x, pos.y, pos.z) : -1;
     const nearWall = here >= 0 && grid != null && grid.nodeWallClearance[here] <= WALL_CELLS;
     const nearDrop = here >= 0 && grid != null && grid.nodeClearance[here] <= NARROW_CELLS;
     const reverseOk = here >= 0 && grid != null && grid.nodeClearance[here] > REVERSE_CLEARANCE;

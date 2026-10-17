@@ -103,7 +103,7 @@ export class LocalAvoidanceService {
     const h = self.heading;
     const x = self.position.x - Math.sin(h) * forward - Math.cos(h) * left;
     const y = self.position.y + Math.cos(h) * forward - Math.sin(h) * left;
-    const node = grid.nodeAt(x, y, self.position.z, 250);
+    const node = grid.standAt(x, y, self.position.z, 250);
     return node >= 0 && grid.isPassable(node) && grid.nodeWallClearance[node] >= ROOM_WALL_CELLS;
   }
 

@@ -109,6 +109,33 @@ export class NavGrid {
     return this.levelAt(this.columnOfPoint(x, y), z, maxDz);
   }
 
+  /**
+   * The level a HULL stands on (or would stand on) at a world point near
+   * height z: the nearest by height within maxDz among the levels a hull
+   * fits on — never one without headroom (NAV_LOW). The hollow under a ramp
+   * slab is a NAV_LOW level 40-60 below the slab (atra_ii: every column of
+   * the ramp), and at the ramp's foot the hull's height is nearer to it than
+   * to the slab: nearest-by-height (nodeAt) picked the hollow, the drop guard
+   * read "no floor ahead" and refused the only road on the map. With no such
+   * level in range, the nearest of any kind, so a caller still sees the
+   * underpass that really is too low.
+   */
+  standAt(x: number, y: number, z: number, maxDz = 200): number {
+    const col = this.columnOfPoint(x, y);
+    if (col < 0) return -1;
+    let best = -1;
+    let bestDz = maxDz;
+    for (let node = this.levelStart[col]; node < this.levelStart[col + 1]; node++) {
+      if ((this.nodeFlags[node] & (NAV_STEEP | NAV_LOW)) !== 0) continue;
+      const dz = Math.abs(this.nodeZ[node] - z);
+      if (dz <= bestDz) {
+        bestDz = dz;
+        best = node;
+      }
+    }
+    return best >= 0 ? best : this.levelAt(col, z, maxDz);
+  }
+
   nodeWorld(node: number, out: Vec3Like): Vec3Like {
     const col = this.nodeCol[node];
     out.x = this.colX(col);

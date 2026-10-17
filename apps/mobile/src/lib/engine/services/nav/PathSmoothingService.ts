@@ -50,7 +50,7 @@ export class PathSmoothingService {
       const x = a.x + dx * t;
       const y = a.y + dy * t;
       const z = a.z + (b.z - a.z) * t;
-      const node = grid.nodeAt(x, y, z, LINE_DZ);
+      const node = grid.standAt(x, y, z, LINE_DZ);
       if (node < 0 || !grid.isPassable(node) || grid.nodeClearance[node] < LINE_CLEARANCE || grid.nodeWallClearance[node] < LINE_WALL_CLEARANCE) {
         return false;
       }
