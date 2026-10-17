@@ -11,6 +11,7 @@ import type RespawnService from '../battle/RespawnService';
 import type CameraService from '../battle/CameraService';
 import type BattleStateService from '../battle/BattleStateService';
 import type SupplyRuleService from '../battle/SupplyRuleService';
+import type BattleEventService from '../battle/BattleEventService';
 
 /** How fast the stick sweeps the Shaft's barrel in sniper mode, rad/s. */
 const SHAFT_PITCH_SPEED = (25 * Math.PI) / 180;
@@ -27,6 +28,7 @@ export class TankDriverService {
   private readonly cameraService = inject<CameraService>(TYPES.cameraService);
   private readonly battleStateService = inject<BattleStateService>(TYPES.battleStateService);
   private readonly supplyRuleService = inject<SupplyRuleService>(TYPES.supplyRuleService);
+  private readonly battleEventService = inject<BattleEventService>(TYPES.battleEventService);
 
   public apply = (actor: TankActor, command: TankCommand, dtSec: number): void => {
     const gameTank = actor.gameTank;
@@ -90,6 +92,9 @@ export class TankDriverService {
     // --- supplies (one-shot) ------------------------------------------------
     if (command.supply != null && !dead) {
       const activated = actor.supplies.activate(command.supply);
+      if (activated) {
+        this.battleEventService.emit('supply', { actorId: actor.id, kind: command.supply, local: actor.isLocal });
+      }
       if (activated && command.supply === 'health') {
         // The kit heals in a blink; the icon lingers so everyone sees it.
         actor.healShownUntil = this.battleStateService.timeMs + HEAL_ICON_MS;

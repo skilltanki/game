@@ -1,6 +1,7 @@
 // Battle-wide events. Game logic emits plain data; presentation (HUD, sounds,
 // ads) subscribes. No HTML strings cross this boundary.
 import type { TeamType } from './BattleConfig';
+import type { SupplyKind } from './TankCommand';
 
 export type BattlePhase = 'idle' | 'loading' | 'playing' | 'paused' | 'over';
 
@@ -16,6 +17,8 @@ export interface BattleEventMap {
   flag: { kind: 'taken' | 'dropped' | 'returned' | 'delivered'; flag: 'red' | 'blue'; byId: string | null; byName: string | null; byTeam: TeamType | null };
   /** Battle clock. */
   clock: { msLeft: number | null };
+  /** A supply was activated (the engine accepted it: ready, alive); `local` = the local tank's. */
+  supply: { actorId: string; kind: SupplyKind; local: boolean };
   /** The local player's respawn countdown (ms dead; 0 when alive). */
   localDeath: { deadMs: number; respawnInMs: number };
   /** Final whistle. */

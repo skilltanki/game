@@ -31,6 +31,7 @@ import type CombatService from './services/battle/CombatService';
 import type TankSpawnService from './services/battle/TankSpawnService';
 import type RespawnService from './services/battle/RespawnService';
 import type SupplyRuleService from './services/battle/SupplyRuleService';
+import type SupplySoundService from './services/battle/SupplySoundService';
 import type ScoreService from './services/battle/ScoreService';
 import type ClockService from './services/battle/ClockService';
 import type CameraService from './services/battle/CameraService';
@@ -96,6 +97,7 @@ const battleServices = {
   tankSpawnService: inject<TankSpawnService>(TYPES.tankSpawnService),
   respawnService: inject<RespawnService>(TYPES.respawnService),
   supplyRuleService: inject<SupplyRuleService>(TYPES.supplyRuleService),
+  supplySoundService: inject<SupplySoundService>(TYPES.supplySoundService),
   scoreService: inject<ScoreService>(TYPES.scoreService),
   clockService: inject<ClockService>(TYPES.clockService),
   cameraService: inject<CameraService>(TYPES.cameraService),

@@ -43,6 +43,7 @@ const battleServices = {
   tankSpawnService: Symbol('tankSpawnService'),
   respawnService: Symbol('respawnService'),
   supplyRuleService: Symbol('supplyRuleService'),
+  supplySoundService: Symbol('supplySoundService'),
   scoreService: Symbol('scoreService'),
   clockService: Symbol('clockService'),
   cameraService: Symbol('cameraService'),

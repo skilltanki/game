@@ -17,6 +17,7 @@ import type ScoreService from './ScoreService';
 import type ClockService from './ClockService';
 import type CameraService from './CameraService';
 import type RespawnService from './RespawnService';
+import type SupplySoundService from './SupplySoundService';
 import type TankSpawnService from './TankSpawnService';
 import type BattleLoopService from './BattleLoopService';
 import type ModeRuleService from '../mode/ModeRuleService';
@@ -43,6 +44,7 @@ export class BattleSessionService {
   private readonly clockService = inject<ClockService>(TYPES.clockService);
   private readonly cameraService = inject<CameraService>(TYPES.cameraService);
   private readonly respawnService = inject<RespawnService>(TYPES.respawnService);
+  private readonly supplySoundService = inject<SupplySoundService>(TYPES.supplySoundService);
   private readonly tankSpawnService = inject<TankSpawnService>(TYPES.tankSpawnService);
   private readonly battleLoopService = inject<BattleLoopService>(TYPES.battleLoopService);
   private readonly modeRuleService = inject<ModeRuleService>(TYPES.modeRuleService);
@@ -116,6 +118,7 @@ export class BattleSessionService {
       this.respawnService.create();
       await this.flagModeService.setup(stage.ctfFlagPositions);
       this.placeAtSpawns();
+      this.supplySoundService.create();
       if (config.online != null) {
         // Multiplayer: the netcode takes over damage, deaths, spawns, flags
         // and the clock (host) or replays the host's word (replica); the
@@ -187,6 +190,7 @@ export class BattleSessionService {
     }
     engine.botEngineService.disposeBattle();
     this.flagModeService.dispose();
+    this.supplySoundService.dispose();
     this.respawnService.dispose();
     this.combatService.dispose();
     this.cameraService.dispose();
