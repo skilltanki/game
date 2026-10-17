@@ -14,6 +14,7 @@
 // distance (three tanks nose to tail at a wall, the carrier in front, was
 // a deadlock).
 import type { BotMemory } from '../../../../classes/engine/BotMemory';
+import { ordinalOf } from '../../../../classes/engine/ordinal';
 import type { BotPerception, TankView } from '../../../../model/Perception';
 import { inject } from '../../core/di';
 import TYPES from '../../core/types';
@@ -188,16 +189,6 @@ export class LocalAvoidanceService {
     return { move: Math.min(Math.abs(steer.move), YIELD_THROTTLE) * (steer.move < 0 ? -1 : 1), turn: Math.max(-1, Math.min(1, steer.turn + side * AVOID_TURN)), blocked: false, to: best.id, hold: false };
   }
 
-  /** Deterministic order for the no-ramming rule: botN -> N, the player last, anything else by name hash. */
-  private ordinalOf(id: string): number {
-    const m = /^bot(\d+)$/.exec(id);
-    if (m != null) return Number(m[1]);
-    if (id === 'player') return 1e9;
-    let hash = 0;
-    for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
-    return 1e6 + (hash % 1e6);
-  }
-
   /**
    * No ramming: the nearest tank in the cone ahead within RAM_YIELD_DISTANCE
    * that is an opponent, or a teammate of my own rank, and outranks me by
@@ -212,7 +203,7 @@ export class LocalAvoidanceService {
     const fy = Math.cos(h);
     const lx = -Math.cos(h);
     const ly = -Math.sin(h);
-    const mine = this.ordinalOf(self.id);
+    const mine = ordinalOf(self.id);
     const v = self.velocity;
     let best: TankView | null = null;
     let bestD = RAM_YIELD_DISTANCE;
@@ -226,7 +217,7 @@ export class LocalAvoidanceService {
       if ((dx * fx + dy * fy) / d < Math.cos(AHEAD_HALF_ANGLE)) continue;
       const ally = other.team === self.team;
       if (ally && this.priorityOf(perception, other) !== rank) continue;
-      if (this.ordinalOf(other.id) < mine) continue;
+      if (ordinalOf(other.id) < mine) continue;
       // Moving away at my pace: a convoy mate, not a head-on.
       if (d >= SPACE_DISTANCE && ((v.x - other.velocity.x) * dx + (v.y - other.velocity.y) * dy) / d < CONVOY_CLOSING_SPEED) continue;
       best = other;
@@ -243,7 +234,7 @@ export class LocalAvoidanceService {
         if (other.alive) {
           const ally = other.team === self.team;
           if (ally && this.priorityOf(perception, other) !== rank) continue;
-          if (this.ordinalOf(other.id) < mine) continue;
+          if (ordinalOf(other.id) < mine) continue;
         }
         close = other;
         closeD = d;

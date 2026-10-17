@@ -29,6 +29,8 @@ export class BotMemory {
   lastHeading = 0;
   /** Sim time since which the hull has been on its roof (0 = upright). */
   overturnedSince = 0;
+  /** Staggered start: until this sim time a fresh life waits for higher-ordinal teammates to drive off (0 = on its way). */
+  departUntil = 0;
   /** CTF staging: sim time since this attacker started waiting for a buddy near the enemy flag (0 = not waiting). */
   stagingSince = 0;
   /** CTF: sim time since this attacker started clearing the flag's guard (0 = not clearing). */
@@ -126,6 +128,7 @@ export class BotMemory {
     this.vetoCount = 0;
     this.vetoAt = 0;
     this.overturnedSince = 0;
+    this.departUntil = 0;
     this.stagingSince = 0;
     this.guardSince = 0;
     this.routeIndex = 0;

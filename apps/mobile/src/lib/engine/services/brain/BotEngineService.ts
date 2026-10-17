@@ -3,6 +3,7 @@
 // (createSource); it hands back ControlSources that, once per physics
 // tick, perceive -> decide -> plan/steer -> aim -> push ONE TankCommand.
 import { BotMemory } from '../../../../classes/engine/BotMemory';
+import { ordinalOf } from '../../../../classes/engine/ordinal';
 import type { NavGrid } from '../../../../classes/engine/NavGrid';
 import { Rng } from '../../../../classes/engine/Rng';
 import type { BotDifficulty } from '../../../../model/BattleConfig';
@@ -73,6 +74,17 @@ interface BotRuntime {
 
 /** How long the turret keeps its last aim after losing the target before centring. */
 const TURRET_HOLD_MS = 2500;
+/**
+ * Staggered start: a fresh life with a higher-ordinal teammate within
+ * DEPART_RADIUS stands (gun working) until that teammate has driven off, at
+ * most DEPART_MAX_MS. Babylon TDM: four hulls spawning in a 600-unit ring and
+ * heading through each other spent 8-15 s yielding, holding and pivoting
+ * (the no-ramming rule's lower hull backs off, the higher one is blocked by
+ * the holder and crawl-turns, the stuck recovery reverses both).
+ */
+const DEPART_RADIUS = 900;
+const DEPART_MAX_MS = 3000;
+const STAND: { move: number; turn: number } = { move: 0, turn: 0 };
 
 export class BotEngineService {
   private readonly navGridBuildService = inject<NavGridBuildService>(TYPES.navGridBuildService);
@@ -209,6 +221,7 @@ export class BotEngineService {
       runtime.wasDead = false;
       memory.reset();
       this.strategyService.assignRole(perception, memory, runtime.index);
+      memory.departUntil = perception.now + DEPART_MAX_MS;
     }
     // Flipped onto the roof: nothing drives, and it is not "stuck" either; the
     // engine rights an overturned tank after 6 s (respawn.ts OVERTURN_FLIP_MS).
@@ -241,7 +254,7 @@ export class BotEngineService {
     if (gun.target != null) memory.lastTargetAt = perception.now;
     // The finger: a held trigger for most turrets, taps and charges for one that fires on release (the Shaft).
     const trigger = this.triggerService.decide(perception, memory, gun);
-    const steer = this.navigatorService.steer(perception, memory, rng, objective, dtSec, layers);
+    const steer = this.waitingToDepart(perception, memory) ? STAND : this.navigatorService.steer(perception, memory, rng, objective, dtSec, layers);
     const supply = this.supplyService.pick(perception, memory, gun.target, runtime.ref.difficulty);
 
     return createCommand({
@@ -258,6 +271,24 @@ export class BotEngineService {
       turret: 0,
       turretCenter: gun.target == null && perception.now - memory.lastTargetAt > TURRET_HOLD_MS,
     });
+  }
+
+  /** See DEPART_*: true while a higher-ordinal teammate is still within DEPART_RADIUS of this fresh life. Once clear, clear for good. */
+  private waitingToDepart(perception: BotPerception, memory: BotMemory): boolean {
+    if (memory.departUntil === 0) return false;
+    const self = perception.self;
+    if (perception.now < memory.departUntil) {
+      const mine = ordinalOf(self.id);
+      for (const ally of perception.allies()) {
+        if (!ally.alive || ordinalOf(ally.id) < mine) continue;
+        if (Math.hypot(ally.position.x - self.position.x, ally.position.y - self.position.y) < DEPART_RADIUS) {
+          memory.lastSteerSource = 'hold-idle';
+          return true;
+        }
+      }
+    }
+    memory.departUntil = 0;
+    return false;
   }
 }
 
