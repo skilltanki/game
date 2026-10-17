@@ -244,7 +244,13 @@ export class LocalAvoidanceService {
       const dy = close.position.y - p.y;
       const ahead = (dx * fx + dy * fy) / closeD;
       const side = dx * lx + dy * ly > 0 ? -1 : 1;
-      return this.stepAway(perception, ahead, side, close.id, RAM_YIELD_THROTTLE);
+      const step = this.stepAway(perception, ahead, side, close.id, RAM_YIELD_THROTTLE);
+      // One on my tail is a convoy, not a head-on: pull away and keep going. The
+      // hold after this step stood the front hull still while the one behind
+      // was blocked by it (Babylon: a column of five on the ramp, bot1/3/4 in
+      // the hold for bot4/5, bot5 crawl-turning into bot4 — nobody moving).
+      if (ahead < -0.3) return { ...step, hold: false };
+      return step;
     }
     // Nose away from it: it sits left (lateral > 0) -> yaw right (turn -1) while backing — if there is room behind.
     const turn = bestLateral > 0 ? -0.6 : 0.6;
@@ -310,7 +316,10 @@ export class LocalAvoidanceService {
     // threshold and every hold ended in a recovery reverse: kolhoz CTF stuck 6 -> 47).
     if (now < memory.yieldUntil && memory.yieldTo != null) {
       const other = perception.tanks().find((o) => o.id === memory.yieldTo);
-      if (other != null && other.alive && Math.hypot(other.position.x - p.x, other.position.y - p.y) < YIELD_HOLD_DISTANCE) {
+      // The hold lasts while the other is still close AND still in front: once it
+      // is past (beside or behind), standing only blocks it and whoever follows.
+      const inFront = other != null && (other.position.x - p.x) * -Math.sin(h) + (other.position.y - p.y) * Math.cos(h) > 0;
+      if (other != null && other.alive && inFront && Math.hypot(other.position.x - p.x, other.position.y - p.y) < YIELD_HOLD_DISTANCE) {
         return { move: 0, turn: 0, blocked: false };
       }
       memory.yieldUntil = 0;
