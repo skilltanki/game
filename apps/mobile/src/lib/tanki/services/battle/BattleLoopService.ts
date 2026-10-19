@@ -146,6 +146,9 @@ export class BattleLoopService {
     // The player's own plate (hp bar, call sign, effect icons) is never
     // drawn: the HUD shows all of it, and on a phone it only hides the aim.
     localTank?.setOverheadVisible(false);
+    // The player's own silhouette goes with the bushes while the scope is up:
+    // the camera's ride into the muzzle crossed the hull's rear otherwise.
+    localTank?.setSkinVisible(shaftAim <= 0.01);
     for (const laser of this.tankSpawnService.laserSights()) {
       const owner = laser.getOwner();
       const ownerAiming = owner.weapon instanceof ShaftWeapon ? owner.weapon.isAiming() : true;

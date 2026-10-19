@@ -242,6 +242,7 @@ export class GameTank {
   private nameLabel: pc.Entity | null = null;
   /** False when the tank is kept out of the battle (Explore's unused bot). */
   private visible = true;
+  private skinVisible = true;
   /** False while the local tank is in Shaft's sniper view. */
   private overheadVisible = true;
   /** Last requested trigger state, so a blocked barrel can restore it. */
@@ -911,6 +912,25 @@ export class GameTank {
    */
   setOverheadVisible(visible: boolean): void {
     this.overheadVisible = visible;
+  }
+
+  /**
+   * Shows or hides the skin's meshes only (hull, turret, whatever renders
+   * under them) — the entity stays enabled, so the muzzle, the sounds and the
+   * laser keep working. The local tank in Shaft's sniper mode: the camera
+   * rides from behind the hull into the muzzle and passed THROUGH the tank's
+   * own rear on the way (the owner's call: hide it, like the bushes).
+   */
+  setSkinVisible(visible: boolean): void {
+    if (this.skinVisible === visible) return;
+    this.skinVisible = visible;
+    for (const name of ['hull', 'turret']) {
+      const part = this.entity.findByName(name) as pc.Entity | null;
+      if (part == null) continue;
+      for (const render of part.findComponents('render') as pc.RenderComponent[]) {
+        render.enabled = visible;
+      }
+    }
   }
 
   setVisible(visible: boolean): void {
