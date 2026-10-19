@@ -13,8 +13,12 @@ import type BattleStateService from '../battle/BattleStateService';
 import type SupplyRuleService from '../battle/SupplyRuleService';
 import type BattleEventService from '../battle/BattleEventService';
 
-/** How fast the stick sweeps the Shaft's barrel in sniper mode, rad/s. */
-const SHAFT_PITCH_SPEED = (25 * Math.PI) / 180;
+/**
+ * How fast W/S sweep the Shaft's barrel, radians per second. Halved from
+ * 25 deg/s: at that rate a tap overshot a distant tank vertically.
+ */
+const SHAFT_PITCH_SPEED = (12.5 * Math.PI) / 180;
+
 /** Sniper-mode elevation limits (ProTanki shots-data: asymmetric). */
 const SHAFT_AIM_MAX_PITCH_UP = (12 * Math.PI) / 180;
 const SHAFT_AIM_MAX_PITCH_DOWN = (15 * Math.PI) / 180;
