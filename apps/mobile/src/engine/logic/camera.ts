@@ -46,6 +46,13 @@ const SLOPE_FOLLOW_RATE = 6;
  * staring up at the tracks. In the world frame the camera sits behind and
  * above as on the flat, looking at the tank, whichever way up it lies.
  */
+/**
+ * Tank.getCameraParams: the follow camera orbits the TURRET's position, 11
+ * units (0.11 m) down along the hull's up — not the hull's centre. On a hull
+ * whose turret sits off-centre (the Hornet's rides at the rear) an orbit
+ * about the hull centre swung the turret across the screen under Z/X.
+ */
+const PIVOT_BELOW_TURRET = 0.11;
 const FRAME_HULL_TILT = (45 * Math.PI) / 180;
 const FRAME_WORLD_TILT = (75 * Math.PI) / 180;
 /** FollowCameraController.MIN_DISTANCE, in sim units. */
@@ -81,6 +88,8 @@ export class FollowCamera {
   private readonly _camOffset = new pc.Vec3();
   private readonly _fwdSim = new pc.Vec3();
   private readonly _turretFwd = new pc.Vec3();
+  /** The follow camera's pivot: the turret's mount, PIVOT_BELOW_TURRET under it along the hull's up (world metres). */
+  private readonly _pivot = new pc.Vec3();
   private readonly camTarget = new pc.Vec3();
   private readonly forwardSim = new pc.Vec3();
   private readonly _shotDirSim = new Vector3();
@@ -314,8 +323,10 @@ export class FollowCamera {
       // ManualTargetingActivationState lerps the follow camera into
       // TargetingCameraController's pose over targetingTransitionTime.
       const camDir = shaftAim > 0 ? _shotDirWorld : forwardSim;
-      const camDist = 9;
-      const camHeight = 4.5;
+      // 9 / 4.5 was the original's resting pose (10.06 m out at 26.6 deg);
+      // the owner wanted it 1.5 m farther along the same line: 11.56 m.
+      const camDist = 10.34;
+      const camHeight = 5.17;
       // Port of FollowCameraController.getCollisionPoint: cast from the tank
       // toward where the camera wants to sit and pull it in to the first wall,
       // so it never ends up inside the garage on canyon or outside the tunnel.
@@ -350,6 +361,13 @@ export class FollowCamera {
       // hull's symmetry plane on a diagonal slope.
       player.entity.getWorldTransform().transformVector(this._hullUpSim.set(0, 0, 1), this._hullUpWorld);
       this._hullUpWorld.normalize();
+      const turretPos = player.turretEntity.getPosition();
+      this._pivot.set(
+        turretPos.x - this._hullUpWorld.x * PIVOT_BELOW_TURRET,
+        turretPos.y - this._hullUpWorld.y * PIVOT_BELOW_TURRET,
+        turretPos.z - this._hullUpWorld.z * PIVOT_BELOW_TURRET,
+      );
+      const pivot = this._pivot;
       // How much of the hull's frame applies (see FRAME_HULL_TILT): 1 upright, 0 past FRAME_WORLD_TILT.
       const hullShare = Math.max(0, Math.min(1, (this._hullUpWorld.y - Math.cos(FRAME_WORLD_TILT)) / (Math.cos(FRAME_HULL_TILT) - Math.cos(FRAME_WORLD_TILT))));
       // The sniper view keeps the hull's frame too: the original's targeting
@@ -397,7 +415,7 @@ export class FollowCamera {
         -fwd.y * wantDist + up.y * wantHeight,
         -fwd.z * wantDist + up.z * wantHeight,
       );
-      const camT = this.clipCameraOffset(tankPos, this._camOffset);
+      const camT = this.clipCameraOffset(pivot, this._camOffset);
       // Pitch correction only matters when a wall actually squeezed the camera.
       // Disabled while the Shaft is aiming: sniper mode owns the whole camera
       // (its look-ahead target and zoom), and nudging the pitch there would
@@ -415,16 +433,16 @@ export class FollowCamera {
       // CameraShaker offset (sim units -> world metres via the simRoot scale)
       const shake = this.cameraShaker.isActive() ? SIM_TO_WORLD : 0;
       // The hull pose: behind the hull in its own frame, wall-clipped, Q/E-tilted; the wall lift is the world's up.
-      const hullX = tankPos.x + this._camOffset.x * camT;
-      const hullY = tankPos.y + this._camOffset.y * camT + this._camLift;
-      const hullZ = tankPos.z + this._camOffset.z * camT;
+      const hullX = pivot.x + this._camOffset.x * camT;
+      const hullY = pivot.y + this._camOffset.y * camT + this._camLift;
+      const hullZ = pivot.z + this._camOffset.z * camT;
       // The correction tilts the look target DOWN by dropping it: at the
       // squeezed distance that keeps the tank in frame instead of the wall.
       const lookDrop = Math.tan(-pitchCorrection) * Math.max(tiltedDist, 0.1);
       const lift = 1 - lookDrop;
-      const hullTargetX = tankPos.x + fwd.x + up.x * lift;
-      const hullTargetY = tankPos.y + fwd.y + up.y * lift;
-      const hullTargetZ = tankPos.z + fwd.z + up.z * lift;
+      const hullTargetX = pivot.x + fwd.x + up.x * lift;
+      const hullTargetY = pivot.y + fwd.y + up.y * lift;
+      const hullTargetZ = pivot.z + fwd.z + up.z * lift;
       // The sniper pose, the original's TargetingCameraController: the camera
       // sits AT THE GUN (setLocalPosition(getBarrelOrigin()), anchored to the
       // turret) and looks along the barrel, pitched by the elevation. So the
