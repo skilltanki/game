@@ -352,7 +352,12 @@ export class FollowCamera {
       this._hullUpWorld.normalize();
       // How much of the hull's frame applies (see FRAME_HULL_TILT): 1 upright, 0 past FRAME_WORLD_TILT.
       const hullShare = Math.max(0, Math.min(1, (this._hullUpWorld.y - Math.cos(FRAME_WORLD_TILT)) / (Math.cos(FRAME_HULL_TILT) - Math.cos(FRAME_WORLD_TILT))));
-      const frameShare = hullShare * (1 - shaftAim);
+      // The sniper view keeps the hull's frame too: the original's targeting
+      // camera is the turret's matrix (hull tilt included) pitched by the
+      // elevation, so the scope rolls with the tank. Blending the up to the
+      // world's while aiming levelled the horizon on a side slope (30 deg of
+      // roll gone over the charge, measured) — the "angle change" on aiming.
+      const frameShare = hullShare;
       const upK = Math.min(1, SLOPE_FOLLOW_RATE * dt);
       this._camUp.x += (this._hullUpWorld.x * frameShare - this._camUp.x) * upK;
       this._camUp.y += (this._hullUpWorld.y * frameShare + (1 - frameShare) - this._camUp.y) * upK;
@@ -439,9 +444,9 @@ export class FollowCamera {
         // behind the muzzle, the view stays parallel to the barrel, so the
         // beam reads as a line running up into the spot (the original's
         // barrel origin is the gun's base, behind the muzzle, under a reticle).
-        const eyeX = _muzzleWorld.x - _shotDirWorld.x * SNIPER_EYE_BACK;
-        const eyeY = _muzzleWorld.y - _shotDirWorld.y * SNIPER_EYE_BACK + SNIPER_EYE_RISE;
-        const eyeZ = _muzzleWorld.z - _shotDirWorld.z * SNIPER_EYE_BACK;
+        const eyeX = _muzzleWorld.x - _shotDirWorld.x * SNIPER_EYE_BACK + up.x * SNIPER_EYE_RISE;
+        const eyeY = _muzzleWorld.y - _shotDirWorld.y * SNIPER_EYE_BACK + up.y * SNIPER_EYE_RISE;
+        const eyeZ = _muzzleWorld.z - _shotDirWorld.z * SNIPER_EYE_BACK + up.z * SNIPER_EYE_RISE;
         x += (eyeX - hullX) * shaftAim;
         y += (eyeY - hullY) * shaftAim;
         z += (eyeZ - hullZ) * shaftAim;
