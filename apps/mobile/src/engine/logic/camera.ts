@@ -169,6 +169,12 @@ export class FollowCamera {
       .reset(-dir.x * wantedDist, dir.z * wantedDist, height)
       .scale(1 / offsetLength);
     const maxLength = offsetLength / SIM_TO_WORLD;
+    // The lift is a per-frame result of THIS cast. It used to survive a miss:
+    // once a wall had squeezed the camera inside MIN_DISTANCE (the Shaft's
+    // low, close sniper camera panned by Z/X does it easily), the lift stayed
+    // on after turning away, and the camera sat ~1 m higher than its resting
+    // pose until the next squeeze (measured 5.53 m instead of 4.50 m).
+    this._camLift = 0;
     if (!detector.raycastStatic(this._camRayOrigin, this._camRayDir, 0xffff, maxLength, null, this._camRayHit)) {
       return wantedDist;
     }
@@ -299,9 +305,11 @@ export class FollowCamera {
       // the one that has to clear the geometry. Testing the resting offset and
       // rotating afterwards let Q push the camera through a tunnel ceiling and
       // E drop it under the floor into the out-of-bounds void.
-      if (shaftAim > 0) {
-        this.camExtraPitch = 0;
-      } else if (this.camTiltUp !== this.camTiltDown) {
+      // Sniper mode owns the camera: Q/E are ignored while aiming and the
+      // tilt is blended OUT by shaftAim below, but the value itself is KEPT,
+      // so the view returns to the player's own tilt after the shot (it used
+      // to be zeroed here, which snapped the camera to the resting angle).
+      if (shaftAim <= 0 && this.camTiltUp !== this.camTiltDown) {
         // Q raises the camera over the turret (bigger elevation angle, so it
         // also moves CLOSER in plan); E drops it toward the ground behind.
         const dir = this.camTiltUp ? 1 : -1;
@@ -317,7 +325,7 @@ export class FollowCamera {
       // ends up straight over the roof again.
       const wantAngle = Math.max(
         CAM_MIN_ELEVATION,
-        Math.min(CAM_MAX_ELEVATION, Math.atan2(camHeight, camDist) + this.camExtraPitch),
+        Math.min(CAM_MAX_ELEVATION, Math.atan2(camHeight, camDist) + this.camExtraPitch * (1 - shaftAim)),
       );
       const wantDist = Math.cos(wantAngle) * restLen;
       const wantHeight = Math.sin(wantAngle) * restLen;
