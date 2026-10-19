@@ -106,7 +106,7 @@ export function chips<T extends string>(rows: KeyRow[], title: string, items: { 
 }
 
 /** Arrow before the rectangular NEXT (24 px grid, stroked like the menu's speaker glyph). */
-const NEXT_ARROW_SVG =
+export const NEXT_ARROW_SVG =
   '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
 
 /**
@@ -124,6 +124,27 @@ export function nextButton(rows: KeyRow[], parent: HTMLElement, onTap: () => voi
     rows.push({ kind: 'pick', elements: [next], selected: () => 0, activate: onTap });
   }
   return next;
+}
+
+/**
+ * The step button for the menu's TOP bar (the multiplayer step: CREATE / NEXT /
+ * START / READY beside the title on a desktop, where the round one sits a
+ * thumb's reach away). Hidden until `setStepChip` shows it; desktop widths
+ * only (theme.css `.menu-top-next`). No keyboard row: the round button's row
+ * already carries the same action for the arrows.
+ */
+export function stepChip(onTap: () => void): HTMLElement {
+  const chip = h('div', { class: 'chip chip-btn menu-top-next' }, h('span', { class: 'menu-next-arrow', html: NEXT_ARROW_SVG }), h('span', { class: 'menu-top-next-label', text: 'NEXT' }));
+  tappable(chip, onTap);
+  return chip;
+}
+
+/** Shows the top-bar step chip with the step's label (green when the action is primary), or hides it. */
+export function setStepChip(chip: HTMLElement, button: { label: string; primary: boolean } | null): void {
+  chip.classList.toggle('is-on', button != null);
+  if (button == null) return;
+  chip.querySelector('.menu-top-next-label')!.textContent = button.label;
+  chip.classList.toggle('is-selected', button.primary);
 }
 
 export interface TextFieldOptions {

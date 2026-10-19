@@ -50,6 +50,8 @@ export interface StepButton {
   action: () => void;
   /** The keyboard row the arrows start on (default 0): the map page starts on the tiles, not on the back chip. */
   focusRow?: number;
+  /** The step draws its own rectangular button in the body (the NEW ROOM form: under the fields), so the top-bar chip stays hidden. */
+  inBody?: boolean;
 }
 
 /** What the step needs from the menu around it. */
@@ -539,9 +541,9 @@ export class RoomsMenuService {
     );
     body.appendChild(fields);
     if (this.joinError != null) body.appendChild(h('div', { class: 'hint error', text: this.joinError }));
-    // The garage's rectangular NEXT under the fields (desktop only); the round NEXT in the corner stays for the thumb.
+    // The rectangular NEXT as the form's last row, under the bots level (the owner's call: here, not in the top bar); desktop only, the round NEXT stays for the thumb.
     nextButton(host.rows, body, () => this.openCreateMap(host));
-    return { label: 'NEXT', primary: false, action: () => this.openCreateMap(host) };
+    return { label: 'NEXT', primary: false, inBody: true, action: () => this.openCreateMap(host) };
   }
 
   private openCreateMap(host: RoomsStepHost): void {
@@ -704,10 +706,20 @@ export class RoomsMenuService {
     const isHost = session.isHost;
     const teams = this.modeRuleService.isTeamMode(room.mode);
 
+    // The step's button: START for the host, READY for a guest. Twice on a desktop
+    // (the round one stays for the thumb): in the head beside LEAVE, where it is on
+    // screen whatever the seats below scroll to (a 12-seat room pushes the bottom
+    // row out of view), and as the last row.
+    const button: StepButton = isHost
+      ? { label: 'START', primary: true, inBody: true, action: () => this.start() }
+      : { label: session.ready ? 'READY ✓' : 'READY', primary: !session.ready, inBody: true, action: () => session.setReady(!session.ready) };
     const leave = h('div', { class: 'chip chip-btn', text: '‹ LEAVE' });
     tappable(leave, () => this.leave(host));
+    const actions = h('div', { class: 'opt-row rooms-actions' });
+    nextButton(host.rows, actions, button.action, button.label).classList.add('menu-next-inline');
+    actions.appendChild(leave);
     host.rows.push({ kind: 'pick', elements: [leave], selected: () => 0, activate: () => this.leave(host) });
-    body.appendChild(h('div', { class: 'section-head' }, h('div', { class: 'caption', text: isHost ? 'Lobby · your room' : 'Lobby · waiting for the host' }), leave));
+    body.appendChild(h('div', { class: 'section-head' }, h('div', { class: 'caption', text: isHost ? 'Lobby · your room' : 'Lobby · waiting for the host' }), actions));
 
     const connected = room.peers.length;
     body.appendChild(
@@ -806,15 +818,8 @@ export class RoomsMenuService {
     );
     if (this.joinError != null) body.appendChild(h('div', { class: 'hint error', text: this.joinError }));
 
-    if (isHost) {
-      return { label: 'START', primary: true, action: () => this.start() };
-    }
-    const ready = session.ready;
-    return {
-      label: ready ? 'READY ✓' : 'READY',
-      primary: !ready,
-      action: () => session.setReady(!ready),
-    };
+    nextButton(host.rows, body, button.action, button.label);
+    return button;
   }
 
   private leave(host: RoomsStepHost): void {

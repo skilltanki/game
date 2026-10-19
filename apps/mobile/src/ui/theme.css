@@ -251,7 +251,12 @@ html, body {
    desktop widths only (a phone has the round one under the thumb), half a paint card tall */
 .menu-body .menu-next { display: none; flex: 0 0 auto; align-self: flex-start; margin-top: 29px; /* + the column's 8 px gap = 37, half a paint card */ height: 37px; gap: 8px; }
 .menu-next-arrow { display: inline-flex; align-items: center; }
+/* the same button inline in a head row (the lobby, beside LEAVE): chip-sized, no top margin */
+.menu-body .menu-next.menu-next-inline { margin-top: 0; height: 36px; align-self: center; }
 @media (min-width: 1024px) { .menu-body .menu-next { display: inline-flex; } }
+/* the multiplayer step's button in the top bar (CREATE / NEXT / START / READY), desktop widths only */
+.menu-top .menu-top-next { display: none; gap: 8px; letter-spacing: 2px; }
+@media (min-width: 1024px) { .menu-top .menu-top-next.is-on { display: inline-flex; } }
 .menu-tabs { display: flex; gap: 6px; }
 /* PLAY with the Telegram disc stacked above it, both hugging the right edge. */
 .menu-play-stack { position: relative; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }

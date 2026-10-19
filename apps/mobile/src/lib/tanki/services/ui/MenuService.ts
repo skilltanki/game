@@ -27,7 +27,7 @@ import type { BattleConfig, BotDifficulty, TeamSide } from '../../../../model/Ba
 import { MULTIPLAYER_MODES, type PlaySide } from '../../../../model/Lobby';
 import { clear, h, lazyImage, tappable } from '../../../../ui/dom';
 import type { KeyRow } from '../../../../ui/keyRows';
-import { chips, counter, nextButton, scrollStripTo, strip } from '../../../../ui/widgets';
+import { chips, counter, nextButton, scrollStripTo, setStepChip, stepChip, strip } from '../../../../ui/widgets';
 import { inject } from '../../core/di';
 import TYPES from '../../core/types';
 import type UiRootService from './UiRootService';
@@ -108,6 +108,8 @@ export class MenuService {
   private keyboardFocus = false;
   /** What the round button does on the ROOMS step (set by RoomsMenuService on render). */
   private stepButton: StepButton | null = null;
+  /** The multiplayer step's button in the top bar (desktop): the same action as the round one. */
+  private topNextEl: HTMLElement | null = null;
 
   public show = (onPlay: (config: BattleConfig) => void): void => {
     this.onPlay = onPlay;
@@ -122,6 +124,9 @@ export class MenuService {
     // the last one (PLAY / DRIVE), so a thumb cannot launch a half-configured
     // battle by habit.
     tappable(this.playEl, () => this.advance());
+    // The rooms step's button again in the top bar (the owner's call: on a
+    // desktop the round one is far from the pointer); render() labels it.
+    this.topNextEl = stepChip(() => this.advance());
     // One listener per menu, whatever show/hide sequence led here.
     if (this.keyHandler != null) window.removeEventListener('keydown', this.keyHandler);
     this.keyHandler = (e) => this.onKey(e);
@@ -144,6 +149,7 @@ export class MenuService {
         h('img', { class: 'menu-logo', attrs: { src: this.assetSourceService.logoUrl, alt: 'SkillTanki' } }),
         this.titleEl,
         h('div', { class: 'menu-spacer' }),
+        this.topNextEl,
         this.qualityChip(),
         this.nameChip(),
         this.soundButton(),
@@ -193,6 +199,7 @@ export class MenuService {
     this.body = null;
     this.titleEl = null;
     this.playEl = null;
+    this.topNextEl = null;
     this.tabEls.clear();
   };
 
@@ -413,6 +420,7 @@ export class MenuService {
       const button = last && multi ? this.roomsButton() : null;
       this.playEl.textContent = button != null ? button.label : !last ? 'NEXT' : mode.id === 'explore' ? 'DRIVE' : 'PLAY';
       this.playEl.classList.toggle('is-next', button != null ? !button.primary : !last);
+      if (this.topNextEl != null) setStepChip(this.topNextEl, button != null && !button.inBody ? button : null);
     }
     this.pushButtonRow();
     this.body.scrollTop = 0;
@@ -618,6 +626,8 @@ export class MenuService {
     requestAnimationFrame(() => scrollStripTo(strip, tiles.get(selected)));
 
     if (mode.id === 'explore') {
+      // The garage's rectangular button again (desktop only): the last step's action, under the strip.
+      nextButton(this.rows, body, () => this.start(), 'DRIVE');
       return;
     }
     const opts = h('div', { class: 'opts' });
@@ -650,6 +660,8 @@ export class MenuService {
       );
     }
     body.appendChild(opts);
+    // The garage's rectangular button again (desktop only), under the options: PLAY with the map as selected.
+    nextButton(this.rows, body, () => this.start(), 'PLAY');
   }
 
   private start(): void {
