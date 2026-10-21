@@ -7,6 +7,7 @@ import { h } from '../../../../ui/dom';
 import { inject } from '../../core/di';
 import TYPES from '../../core/types';
 import type LoggerService from '../base/LoggerService';
+import type DeviceFormService from '../base/DeviceFormService';
 
 export type LayerName = 'controls' | 'hud' | 'menu' | 'prompt' | 'pause' | 'result' | 'loading' | 'rotate';
 
@@ -14,6 +15,7 @@ const LAYER_ORDER: LayerName[] = ['controls', 'hud', 'menu', 'prompt', 'pause', 
 
 export class UiRootService {
   private readonly loggerService = inject<LoggerService>(TYPES.loggerService);
+  private readonly deviceFormService = inject<DeviceFormService>(TYPES.deviceFormService);
 
   private root: HTMLElement | null = null;
   private readonly layers = new Map<LayerName, HTMLElement>();
@@ -60,7 +62,11 @@ export class UiRootService {
 
   public isVisible = (name: LayerName): boolean => !this.layer(name).hidden;
 
-  /** In battle the phone must be landscape; menus work either way. */
+  /**
+   * In battle a phone must be landscape; menus work either way. Only a tall
+   * phone held upright gets the sheet (DeviceFormService.portraitPhone): an
+   * unfolded iPhone Fold, a tablet or a narrow desktop window plays as it is.
+   */
   public requireLandscape = (required: boolean): void => {
     this.battleWantsLandscape = required;
     this.syncRotateHint();
@@ -99,15 +105,12 @@ export class UiRootService {
     );
     this.layer('rotate').appendChild(this.rotateOverlay);
     this.layer('rotate').hidden = false;
-    const sync = (): void => this.syncRotateHint();
-    window.addEventListener('resize', sync);
-    window.addEventListener('orientationchange', sync);
+    this.deviceFormService.onChange(() => this.syncRotateHint());
     this.syncRotateHint();
   }
 
   private syncRotateHint(): void {
-    const portrait = window.innerHeight > window.innerWidth;
-    this.rotateOverlay?.classList.toggle('is-on', portrait && this.battleWantsLandscape);
+    this.rotateOverlay?.classList.toggle('is-on', this.battleWantsLandscape && this.deviceFormService.portraitPhone);
   }
 
   public get mounted(): boolean {

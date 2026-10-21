@@ -23,6 +23,8 @@
   --safe-right: env(safe-area-inset-right, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
+  /* the menu's column on a wide desktop: the bars and the body stop stretching past this */
+  --menu-wide: 1120px;
 }
 
 html, body {
@@ -247,6 +249,19 @@ html, body {
   scrollbar-width: none;
 }
 .menu-body::-webkit-scrollbar { display: none; }
+/* Wide desktop: the top bar, the body and the bottom bar share one centred column
+   (a 2560 px monitor had the logo in one corner and PLAY in the other); the
+   vignette and the scene behind stay full-width. One rule for all three keeps
+   the top chips, the form rows and PLAY on the same edges. */
+@media (min-width: 1280px) {
+  .menu-top, .menu-body, .menu-bottom {
+    width: 100%;
+    max-width: var(--menu-wide);
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+  }
+}
 /* the garage's rectangular NEXT under the paint strip, pinned to the left edge:
    desktop widths only (a phone has the round one under the thumb), half a paint card tall */
 .menu-body .menu-next { display: none; flex: 0 0 auto; align-self: flex-start; margin-top: 29px; /* + the column's 8 px gap = 37, half a paint card */ height: 37px; gap: 8px; }

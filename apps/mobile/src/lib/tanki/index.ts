@@ -9,6 +9,7 @@ import type EngineService from './services/base/EngineService';
 import type GraphicsQualityService from './services/base/GraphicsQualityService';
 import type TextureBudgetService from './services/base/TextureBudgetService';
 import type FullscreenService from './services/base/FullscreenService';
+import type DeviceFormService from './services/base/DeviceFormService';
 import type AudioSettingsService from './services/base/AudioSettingsService';
 import type AdService from './services/base/AdService';
 import type AssetSourceService from './services/asset/AssetSourceService';
@@ -60,6 +61,7 @@ const baseServices = {
   graphicsQualityService: inject<GraphicsQualityService>(TYPES.graphicsQualityService),
   textureBudgetService: inject<TextureBudgetService>(TYPES.textureBudgetService),
   fullscreenService: inject<FullscreenService>(TYPES.fullscreenService),
+  deviceFormService: inject<DeviceFormService>(TYPES.deviceFormService),
   audioSettingsService: inject<AudioSettingsService>(TYPES.audioSettingsService),
   adService: inject<AdService>(TYPES.adService),
 };

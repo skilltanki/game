@@ -7,6 +7,7 @@ import EngineService from '../services/base/EngineService';
 import GraphicsQualityService from '../services/base/GraphicsQualityService';
 import TextureBudgetService from '../services/base/TextureBudgetService';
 import FullscreenService from '../services/base/FullscreenService';
+import DeviceFormService from '../services/base/DeviceFormService';
 import AudioSettingsService from '../services/base/AudioSettingsService';
 import AdService from '../services/base/AdService';
 
@@ -66,6 +67,7 @@ import SessionLogService from '../services/public/SessionLogService';
   provide(TYPES.graphicsQualityService, () => new GraphicsQualityService());
   provide(TYPES.textureBudgetService, () => new TextureBudgetService());
   provide(TYPES.fullscreenService, () => new FullscreenService());
+  provide(TYPES.deviceFormService, () => new DeviceFormService());
   provide(TYPES.audioSettingsService, () => new AudioSettingsService());
   provide(TYPES.adService, () => new AdService());
 }

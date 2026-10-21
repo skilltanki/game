@@ -5,6 +5,7 @@ const baseServices = {
   graphicsQualityService: Symbol('graphicsQualityService'),
   textureBudgetService: Symbol('textureBudgetService'),
   fullscreenService: Symbol('fullscreenService'),
+  deviceFormService: Symbol('deviceFormService'),
   audioSettingsService: Symbol('audioSettingsService'),
   adService: Symbol('adService'),
 };

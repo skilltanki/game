@@ -21,6 +21,7 @@ import TYPES from '../../core/types';
 import type LoggerService from '../base/LoggerService';
 import type StorageService from '../base/StorageService';
 import type FullscreenService from '../base/FullscreenService';
+import type DeviceFormService from '../base/DeviceFormService';
 import type UiRootService from './UiRootService';
 
 /** Chrome's deferred install prompt (not in lib.dom). */
@@ -33,6 +34,7 @@ export class FullscreenPromptService {
   private readonly loggerService = inject<LoggerService>(TYPES.loggerService);
   private readonly fullscreenService = inject<FullscreenService>(TYPES.fullscreenService);
   private readonly storageService = inject<StorageService>(TYPES.storageService);
+  private readonly deviceFormService = inject<DeviceFormService>(TYPES.deviceFormService);
   private readonly uiRootService = inject<UiRootService>(TYPES.uiRootService);
 
   private installEvent: BeforeInstallPromptEvent | null = null;
@@ -45,13 +47,9 @@ export class FullscreenPromptService {
     });
   };
 
-  private get touchDevice(): boolean {
-    return window.matchMedia('(pointer: coarse)').matches;
-  }
-
   /** Shows the modal when it applies, once per profile (localStorage); resolves once the player has chosen (at once when it does not apply). */
   public prompt = (): Promise<void> => {
-    if (!this.touchDevice || this.fullscreenService.immersive || this.storageService.getProfile().homeScreenPromptAt != null) {
+    if (!this.deviceFormService.touch || this.fullscreenService.immersive || this.storageService.getProfile().homeScreenPromptAt != null) {
       return Promise.resolve();
     }
     this.storageService.saveProfile({ homeScreenPromptAt: Date.now() });
