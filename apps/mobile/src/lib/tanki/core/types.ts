@@ -64,6 +64,7 @@ const uiServices = {
   loadingScreenService: Symbol('loadingScreenService'),
   menuService: Symbol('menuService'),
   roomsMenuService: Symbol('roomsMenuService'),
+  backButtonService: Symbol('backButtonService'),
   hudService: Symbol('hudService'),
   touchControlsService: Symbol('touchControlsService'),
   pauseScreenService: Symbol('pauseScreenService'),

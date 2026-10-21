@@ -20,7 +20,10 @@
 // opens MODE, a tap on a mode opens MAP / ROOMS, a tap on a map starts the
 // battle (the owner's call — a tap that only highlighted the tile and waited
 // for the round button read as nothing happening). Keyboard rows:
-// ui/keyRows.ts; widgets: ui/widgets.ts.
+// ui/keyRows.ts; widgets: ui/widgets.ts. The platform's BACK (Android, the
+// browser arrow, the iOS swipe) walks to the step before, one history entry
+// per step (BackButtonService); on the rooms step it first closes the view
+// on top (lobby, map page, form), as the ‹ chips do.
 import { BATTLE_MODES, type BattleModeId } from '../../../../engine/game/BattleMode';
 import { CC_MAX_BOTS, CC_TELEGRAM_URL } from '../../../../config/params';
 import type { BattleConfig, BotDifficulty, TeamSide } from '../../../../model/BattleConfig';
@@ -32,6 +35,7 @@ import { inject } from '../../core/di';
 import TYPES from '../../core/types';
 import type UiRootService from './UiRootService';
 import type RoomsMenuService from './RoomsMenuService';
+import type BackButtonService from './BackButtonService';
 import type { StepButton } from './RoomsMenuService';
 import type StorageService from '../base/StorageService';
 import type AssetSourceService from '../asset/AssetSourceService';
@@ -84,6 +88,7 @@ export class MenuService {
   private readonly audioSettingsService = inject<AudioSettingsService>(TYPES.audioSettingsService);
   private readonly fullscreenService = inject<FullscreenService>(TYPES.fullscreenService);
   private readonly roomsMenuService = inject<RoomsMenuService>(TYPES.roomsMenuService);
+  private readonly backButtonService = inject<BackButtonService>(TYPES.backButtonService);
   private detachFullscreen: (() => void) | null = null;
 
   private tab: Tab = 'tank';
@@ -117,6 +122,7 @@ export class MenuService {
     // MENU, result -> CONTINUE) lands in the garage, not on the map step.
     this.tab = 'tank';
     this.roomsMenuService.reset();
+    this.backButtonService.open(this.tab, (key) => this.returnTo(key));
     this.body = h('div', { class: 'menu-body' });
     this.titleEl = h('div', { class: 'chip chip-title' });
     this.playEl = h('div', { class: 'ctl ctl-fire menu-play', text: 'NEXT' });
@@ -184,6 +190,7 @@ export class MenuService {
   };
 
   public hide = (): void => {
+    this.backButtonService.close();
     if (this.keyHandler != null) {
       window.removeEventListener('keydown', this.keyHandler);
       this.keyHandler = null;
@@ -239,6 +246,17 @@ export class MenuService {
   private go(tab: Tab): void {
     this.tab = tab;
     this.render();
+  }
+
+  /**
+   * The platform's BACK landed on the entry of `key` (BackButtonService). On
+   * the rooms step a view on top of the list goes first — the press is
+   * consumed and the step stays; otherwise the menu walks to that tab.
+   */
+  private returnTo(key: string): boolean {
+    if (this.tab === 'map' && this.multiplayer && this.roomsMenuService.back()) return true;
+    if ((TABS as string[]).includes(key)) this.go(key as Tab);
+    return false;
   }
 
   /** The round button: the next tab, or the battle (the room step's action) on the last one. */
@@ -423,6 +441,7 @@ export class MenuService {
       if (this.topNextEl != null) setStepChip(this.topNextEl, button != null && !button.inBody ? button : null);
     }
     this.pushButtonRow();
+    this.backButtonService.sync(this.tab);
     this.body.scrollTop = 0;
     // A step may ask the arrows to start on a particular row (the room's map page: its tiles).
     const startRow = this.tab === 'map' && multi ? (this.roomsButton()?.focusRow ?? 0) : 0;

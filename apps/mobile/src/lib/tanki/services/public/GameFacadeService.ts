@@ -25,6 +25,7 @@ import type TouchControlsService from '../ui/TouchControlsService';
 import type PauseScreenService from '../ui/PauseScreenService';
 import type FullscreenPromptService from '../ui/FullscreenPromptService';
 import type ResultScreenService from '../ui/ResultScreenService';
+import type BackButtonService from '../ui/BackButtonService';
 import type SessionLogService from './SessionLogService';
 
 export class GameFacadeService {
@@ -46,6 +47,7 @@ export class GameFacadeService {
   private readonly pauseScreenService = inject<PauseScreenService>(TYPES.pauseScreenService);
   private readonly fullscreenPromptService = inject<FullscreenPromptService>(TYPES.fullscreenPromptService);
   private readonly resultScreenService = inject<ResultScreenService>(TYPES.resultScreenService);
+  private readonly backButtonService = inject<BackButtonService>(TYPES.backButtonService);
   private readonly sessionLogService = inject<SessionLogService>(TYPES.sessionLogService);
 
   /** Creates the engine, loads the catalog, shows the menu. */
@@ -135,6 +137,8 @@ export class GameFacadeService {
       document.addEventListener('pointerup', back);
       return;
     }
+    // The platform's BACK (Android in the TWA) opens the pause box, as Escape does; it never leaves the battle.
+    this.backButtonService.hold('battle', () => this.onBattleBack());
     this.hudService.show();
     this.touchControlsService.show();
     // Dev: the owner's battle goes to the bench log for the K/D balance measurement.
@@ -158,6 +162,21 @@ export class GameFacadeService {
       online ? 'The battle goes on without you: your tank stands still and can be hit.' : undefined,
     );
   };
+
+  /** BACK in a battle: pause; in the pause box: resume (Android closes a dialog with BACK); on the result: CONTINUE. */
+  private onBattleBack(): boolean {
+    if (this.uiRootService.isVisible('result')) {
+      this.openMenu();
+      return false;
+    }
+    const phase = this.battleStateService.phase;
+    if (phase === 'playing') {
+      this.pause();
+    } else if (phase === 'paused') {
+      this.resume();
+    }
+    return true;
+  }
 
   public resume = (): void => {
     this.pauseScreenService.hide();

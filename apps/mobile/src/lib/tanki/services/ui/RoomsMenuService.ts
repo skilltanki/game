@@ -149,6 +149,30 @@ export class RoomsMenuService {
     }
   };
 
+  /**
+   * The platform's BACK while this step is up (MenuService.returnTo): one view
+   * back, as the ‹ chips do — the lobby leaves the room, the map page returns to
+   * the settings, the form closes. False on the list: the menu steps back a tab.
+   */
+  public back = (): boolean => {
+    const host = this.host;
+    if (host == null) return false;
+    switch (this.view) {
+      case 'lobby':
+        this.leave(host);
+        return true;
+      case 'createMap':
+        this.view = 'create';
+        host.refresh();
+        return true;
+      case 'create':
+        this.closeCreate(host);
+        return true;
+      default:
+        return false;
+    }
+  };
+
   /** The step's name for the title chip. */
   public title = (): string => (this.view === 'create' ? 'NEW ROOM' : this.view === 'createMap' ? 'NEW ROOM · MAP' : this.view === 'lobby' ? 'LOBBY' : 'ROOMS');
 

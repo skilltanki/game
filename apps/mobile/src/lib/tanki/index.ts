@@ -45,6 +45,7 @@ import type UiRootService from './services/ui/UiRootService';
 import type LoadingScreenService from './services/ui/LoadingScreenService';
 import type MenuService from './services/ui/MenuService';
 import type RoomsMenuService from './services/ui/RoomsMenuService';
+import type BackButtonService from './services/ui/BackButtonService';
 import type HudService from './services/ui/HudService';
 import type TouchControlsService from './services/ui/TouchControlsService';
 import type PauseScreenService from './services/ui/PauseScreenService';
@@ -118,6 +119,7 @@ const uiServices = {
   loadingScreenService: inject<LoadingScreenService>(TYPES.loadingScreenService),
   menuService: inject<MenuService>(TYPES.menuService),
   roomsMenuService: inject<RoomsMenuService>(TYPES.roomsMenuService),
+  backButtonService: inject<BackButtonService>(TYPES.backButtonService),
   hudService: inject<HudService>(TYPES.hudService),
   touchControlsService: inject<TouchControlsService>(TYPES.touchControlsService),
   pauseScreenService: inject<PauseScreenService>(TYPES.pauseScreenService),
