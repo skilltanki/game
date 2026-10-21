@@ -7,6 +7,7 @@ import { inject } from '../../core/di';
 import TYPES from '../../core/types';
 import type LoggerService from '../base/LoggerService';
 import type EngineService from '../base/EngineService';
+import type AudioSettingsService from '../base/AudioSettingsService';
 import type AssetCatalogService from '../asset/AssetCatalogService';
 import type BattleStateService from './BattleStateService';
 import type BattleEventService from './BattleEventService';
@@ -34,6 +35,7 @@ import { TankRoster } from '../../../../engine/game/TankRoster';
 export class BattleSessionService {
   private readonly loggerService = inject<LoggerService>(TYPES.loggerService);
   private readonly engineService = inject<EngineService>(TYPES.engineService);
+  private readonly audioSettingsService = inject<AudioSettingsService>(TYPES.audioSettingsService);
   private readonly assetCatalogService = inject<AssetCatalogService>(TYPES.assetCatalogService);
   private readonly battleStateService = inject<BattleStateService>(TYPES.battleStateService);
   private readonly battleEventService = inject<BattleEventService>(TYPES.battleEventService);
@@ -146,6 +148,8 @@ export class BattleSessionService {
   public pause = (): void => {
     if (this.battleStateService.phase === 'playing') {
       this.touchInputService.setEnabled(false);
+      // Quiet while the box is up (the owner's call); the speaker setting stays.
+      this.audioSettingsService.hold(true);
       this.battleStateService.setPhase('paused');
     }
   };
@@ -153,6 +157,7 @@ export class BattleSessionService {
   public resume = (): void => {
     if (this.battleStateService.phase === 'paused') {
       this.touchInputService.setEnabled(true);
+      this.audioSettingsService.hold(false);
       this.battleStateService.setPhase('playing');
     }
   };
@@ -181,6 +186,8 @@ export class BattleSessionService {
       return;
     }
     this.battleLoopService.stop();
+    // MAIN MENU from the pause box: the menu's backdrop and the next battle sound again.
+    this.audioSettingsService.hold(false);
     online.netBattleService.stop();
     this.onlineBattleAdapterService.dispose();
     this.controlRegistryService.detachAll();

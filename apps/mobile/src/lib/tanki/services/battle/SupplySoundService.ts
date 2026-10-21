@@ -4,7 +4,7 @@
 // tank's death drops the queue — a cue for an effect the respawn has just
 // wiped would announce nothing — but never cuts the cue already playing.
 // Plain HTMLAudio like the flag cues (FlagModeService), gated by
-// AudioSettingsService.muted at the moment of the activation.
+// AudioSettingsService.silent (muted or paused) at the moment of the activation.
 import type { SupplyKind } from '../../../../model/TankCommand';
 import { assetUrl } from '../../../../engine/tank/TankAssets';
 import { inject } from '../../core/di';
@@ -67,7 +67,7 @@ export class SupplySoundService {
 
   private cue(kind: SupplyKind): void {
     const name = CUES[kind];
-    if (name == null || this.audioSettingsService.muted) return;
+    if (name == null || this.audioSettingsService.silent) return;
     if (this.playing != null) {
       this.queue.push(name);
       return;

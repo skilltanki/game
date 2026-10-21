@@ -192,7 +192,7 @@ export class FlagModeService {
   };
 
   private play(name: string): void {
-    if (this.audioSettingsService.muted) {
+    if (this.audioSettingsService.silent) {
       return;
     }
     let audio = this.sounds.get(name);
