@@ -126,6 +126,29 @@ export function nextButton(rows: KeyRow[], parent: HTMLElement, onTap: () => voi
   return next;
 }
 
+/** The same arrow pointing left, before the rectangular BACK. */
+export const BACK_ARROW_SVG =
+  '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg>';
+
+/**
+ * The rectangular BACK and NEXT (DRIVE / PLAY) side by side under a step, the
+ * grey BACK first: the step before, then the step's action. Desktop widths
+ * only, like `nextButton` (theme.css `.menu-step-row`). One keyboard row with
+ * both, the arrows starting on the action.
+ */
+export function stepButtons(rows: KeyRow[], parent: HTMLElement, onBack: () => void, onNext: () => void, label = 'NEXT'): HTMLElement {
+  const back = h('div', { class: 'chip chip-btn chip-big menu-next menu-back' }, h('span', { class: 'menu-next-arrow', html: BACK_ARROW_SVG }), h('span', { text: 'BACK' }));
+  tappable(back, onBack);
+  const next = h('div', { class: 'chip chip-btn chip-big is-selected menu-next' }, h('span', { class: 'menu-next-arrow', html: NEXT_ARROW_SVG }), h('span', { text: label }));
+  tappable(next, onNext);
+  const row = h('div', { class: 'menu-step-row' }, back, next);
+  parent.appendChild(row);
+  if (getComputedStyle(row).display !== 'none') {
+    rows.push({ kind: 'pick', elements: [back, next], selected: () => 1, activate: (index) => (index === 0 ? onBack() : onNext()) });
+  }
+  return row;
+}
+
 /**
  * The step button for the menu's TOP bar (the multiplayer step: CREATE / NEXT /
  * START / READY beside the title on a desktop, where the round one sits a

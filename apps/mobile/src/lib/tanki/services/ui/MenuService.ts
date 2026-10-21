@@ -23,14 +23,16 @@
 // ui/keyRows.ts; widgets: ui/widgets.ts. The platform's BACK (Android, the
 // browser arrow, the iOS swipe) walks to the step before, one history entry
 // per step (BackButtonService); on the rooms step it first closes the view
-// on top (lobby, map page, form), as the ‹ chips do.
+// on top (lobby, map page, form), as the ‹ chips do. Backspace and Escape on
+// a desktop (Escape = the pad's Circle) do the same one step back (not inside
+// a text field).
 import { BATTLE_MODES, type BattleModeId } from '../../../../engine/game/BattleMode';
 import { CC_MAX_BOTS, CC_TELEGRAM_URL } from '../../../../config/params';
 import type { BattleConfig, BotDifficulty, TeamSide } from '../../../../model/BattleConfig';
 import { MULTIPLAYER_MODES, type PlaySide } from '../../../../model/Lobby';
 import { clear, h, lazyImage, tappable } from '../../../../ui/dom';
 import type { KeyRow } from '../../../../ui/keyRows';
-import { chips, counter, nextButton, scrollStripTo, setStepChip, stepChip, strip } from '../../../../ui/widgets';
+import { chips, counter, nextButton, scrollStripTo, setStepChip, stepButtons, stepChip, strip } from '../../../../ui/widgets';
 import { inject } from '../../core/di';
 import TYPES from '../../core/types';
 import type UiRootService from './UiRootService';
@@ -259,6 +261,17 @@ export class MenuService {
     return false;
   }
 
+  /**
+   * Backspace and the rectangular BACK on a desktop: the view on top of the
+   * rooms step first (lobby, map page, form — as the platform's BACK), then
+   * the tab before. Nothing on the garage.
+   */
+  private stepBack(): void {
+    if (this.tab === 'map' && this.multiplayer && this.roomsMenuService.back()) return;
+    const index = TABS.indexOf(this.tab);
+    if (index > 0) this.go(TABS[index - 1]);
+  }
+
   /** The round button: the next tab, or the battle (the room step's action) on the last one. */
   private advance(): void {
     const index = TABS.indexOf(this.tab);
@@ -278,7 +291,17 @@ export class MenuService {
     if (target != null && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
       return;
     }
-    if (this.root == null || this.rows.length === 0) {
+    if (this.root == null) {
+      return;
+    }
+    // Backspace is BACK (a desktop habit); so is Escape — the pad's Circle comes in as a
+    // synthetic Escape (GamepadInputService). No focus outline for either.
+    if (e.key === 'Backspace' || e.key === 'Escape') {
+      e.preventDefault();
+      this.stepBack();
+      return;
+    }
+    if (this.rows.length === 0) {
       return;
     }
     const row = this.rows[this.focusRow];
@@ -645,8 +668,8 @@ export class MenuService {
     requestAnimationFrame(() => scrollStripTo(strip, tiles.get(selected)));
 
     if (mode.id === 'explore') {
-      // The garage's rectangular button again (desktop only): the last step's action, under the strip.
-      nextButton(this.rows, body, () => this.start(), 'DRIVE');
+      // The garage's rectangular button again (desktop only), BACK beside it: the last step's action, under the strip.
+      stepButtons(this.rows, body, () => this.stepBack(), () => this.start(), 'DRIVE');
       return;
     }
     const opts = h('div', { class: 'opts' });
@@ -679,8 +702,8 @@ export class MenuService {
       );
     }
     body.appendChild(opts);
-    // The garage's rectangular button again (desktop only), under the options: PLAY with the map as selected.
-    nextButton(this.rows, body, () => this.start(), 'PLAY');
+    // The garage's rectangular button again (desktop only), BACK beside it, under the options: PLAY with the map as selected.
+    stepButtons(this.rows, body, () => this.stepBack(), () => this.start(), 'PLAY');
   }
 
   private start(): void {

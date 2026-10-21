@@ -270,6 +270,10 @@ html, body {
 /* the same button inline in a head row (the lobby, beside LEAVE): chip-sized, no top margin */
 .menu-body .menu-next.menu-next-inline { margin-top: 0; height: 36px; align-self: center; }
 @media (min-width: 1024px) { .menu-body .menu-next { display: inline-flex; } }
+/* BACK beside DRIVE / PLAY on the map step (desktop only): one row, the buttons keep their size, the row carries the top margin */
+.menu-body .menu-step-row { display: none; gap: 8px; margin-top: 29px; flex: 0 0 auto; }
+.menu-body .menu-step-row .menu-next { margin-top: 0; }
+@media (min-width: 1024px) { .menu-body .menu-step-row { display: flex; } }
 /* the multiplayer step's button in the top bar (CREATE / NEXT / START / READY), desktop widths only */
 .menu-top .menu-top-next { display: none; gap: 8px; letter-spacing: 2px; }
 @media (min-width: 1024px) { .menu-top .menu-top-next.is-on { display: inline-flex; } }
