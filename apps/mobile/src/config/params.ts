@@ -24,7 +24,7 @@ export const CC_PHYSICS_STEP_MS = 33;
 /** Default loadout for a first launch. */
 export const CC_DEFAULT_HULL = 'Hunter';
 export const CC_DEFAULT_TURRET = 'Smoky';
-export const CC_DEFAULT_MAP = 'island_old_summer';
+export const CC_DEFAULT_MAP = 'abyss_old_summer';
 /**
  * Bots in a single-player battle: five by default (the field feels like a
  * free-for-all without getting crowded; the owner's call), up to as many
