@@ -2,6 +2,8 @@
 // the engine renders into. One application for the app's lifetime; one
 // fresh `simRoot` per battle, so tearing a battle down is a single destroy.
 import * as pc from 'playcanvas';
+import { assetProgress } from '../../../../engine/game/AssetProgress';
+import { installLoadPool } from '../../../../engine/game/LoadPool';
 import { applyMapVisual, UNITS_TO_METERS, type MapVisual } from '../../../../engine/logic/bootstrap';
 import { inject } from '../../core/di';
 import TYPES from '../../core/types';
@@ -64,6 +66,10 @@ export class EngineService {
     this.graphicsQualityService.attach(app.graphicsDevice, () => app.resizeCanvas(), app.assets);
     // Textures leave the GPU with their scene (see TextureBudgetService).
     this.textureBudgetService.attach(app);
+    // The loading bar sees the engine's own downloads (textures, sounds), and
+    // they queue through the pool, a few at a time (LoadPool).
+    assetProgress.attachTo(app);
+    installLoadPool(app);
     this.audioSettingsService.attach(app);
     window.addEventListener('resize', () => app.resizeCanvas());
     window.addEventListener('orientationchange', () => setTimeout(() => app.resizeCanvas(), 100));

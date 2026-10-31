@@ -15,9 +15,15 @@
 // Progress is deliberately clamped to the total and never drives completion:
 // a stale manifest must make the bar slightly wrong, never hang it. What ends
 // a load is the load's own promise settling.
+//
+// Manifest keys are site paths under the asset root (`/maps/...`); the URLs
+// the loaders see carry that root (`/assets/maps/...` behind the worker, a
+// CDN host elsewhere), so `normalise` strips it. Downloads of both routes go
+// through LoadPool, a few at a time, so the bar moves as the bytes land.
 
 import { assetUrl } from '../tank/TankAssets';
 import * as pc from 'playcanvas';
+import { loadPool } from './LoadPool';
 
 export interface AssetGroup {
   bytes: number;
@@ -155,7 +161,11 @@ export class AssetProgress {
    * stores — so a gzipped map XML credits its full 4 MB rather than the 180 KB
    * that crossed the wire. The bar runs optimistic rather than stalling.
    */
-  async trackedFetch(url: string): Promise<ArrayBuffer> {
+  trackedFetch(url: string): Promise<ArrayBuffer> {
+    return loadPool.run(() => this.fetchTracked(url));
+  }
+
+  private async fetchTracked(url: string): Promise<ArrayBuffer> {
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`HTTP ${response.status} for ${url}`);
@@ -189,16 +199,40 @@ export class AssetProgress {
   }
 }
 
-/** Absolute URLs reach us from PlayCanvas; manifest keys are site paths. */
+/**
+ * Absolute URLs reach us from PlayCanvas; manifest keys are site paths under
+ * the asset root. The root is whatever `assetUrl('/')` resolves to (the
+ * host app's resolver or ASSET_BASE): its pathname is stripped so
+ * `/assets/maps/x.xml` and `https://cdn/maps/x.xml` both become `/maps/x.xml`.
+ */
 function normalise(url: string): string {
-  if (url.startsWith('/')) {
-    return url;
-  }
+  let path: string;
   try {
-    return new URL(url, window.location.origin).pathname;
+    path = new URL(url, window.location.origin).pathname;
   } catch {
     return url;
   }
+  const root = assetRootPath();
+  if (root.length > 1 && path.startsWith(root)) {
+    return path.slice(root.length - 1);
+  }
+  return path;
+}
+
+let cachedRoot: string | null = null;
+
+/** Pathname of the asset root, with a trailing slash (`/assets/`, or `/`). Resolved once: the resolver is set at boot. */
+function assetRootPath(): string {
+  if (cachedRoot == null) {
+    try {
+      let root = new URL(assetUrl('/'), window.location.origin).pathname;
+      if (!root.endsWith('/')) root += '/';
+      cachedRoot = root;
+    } catch {
+      cachedRoot = '/';
+    }
+  }
+  return cachedRoot;
 }
 
 /** The one instance the game uses. */

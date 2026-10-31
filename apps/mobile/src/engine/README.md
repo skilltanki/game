@@ -26,6 +26,11 @@
   потолок скорости сразу (`setMaxSpeed(…, true)`): сглаживание 100 ед/с² при тяге, пропорциональной
   запасу под текущим потолком, давало эффект только после отпускания газа; `clearEffects()`
   (респаун) снимает нитро тоже сразу (`endEffect(type, immediate)`).
+- `game/LoadPool.ts` (2026-10-31, в обеих копиях) — пул на 5 одновременных загрузок: `loadPool.run()` для
+  ручных `trackedFetch` и `installLoadPool(app)` — monkey patch `app.assets.load` для текстур/звуков самого
+  PlayCanvas (версия 2.23.1 зафиксирована). `game/AssetProgress.ts` — `normalise()` срезает корень ассетов
+  (`/assets/`), чтобы ключи совпадали с манифестом. Хост подключает оба в `EngineService.create`; десктоп
+  (`packages/game/src/main.ts`) пул не подключает.
 
 Не скопировано (заменено сервисами `lib/tanki`): `main.ts`, `logic/startBattle.ts`,
 `logic/battleLoop.ts`, `game/Menu.ts`, `game/Hud.ts`, `game/BotController.ts`,
