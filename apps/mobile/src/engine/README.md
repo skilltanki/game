@@ -33,7 +33,7 @@
   (`packages/game/src/main.ts`) пул не подключает.
 - `game/LoadRetry.ts` (2026-10-31, в обеих копиях) — до 5 попыток на загрузку: `installLoadRetry(app)` =
   `app.loader.enableRetry(4)` (встроенные ретраи PlayCanvas для текстур/звуков), `withRetry` для
-  `trackedFetch` (4xx кроме 408/429 — без повторов). Десктоп `withRetry` получает через `AssetProgress`,
+  `trackedFetch` (4xx кроме 408/429 — одна повторная попытка, затем окончательно). Десктоп `withRetry` получает через `AssetProgress`,
   `installLoadRetry` в `main.ts` не подключён.
 
 Не скопировано (заменено сервисами `lib/tanki`): `main.ts`, `logic/startBattle.ts`,

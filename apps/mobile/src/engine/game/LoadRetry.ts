@@ -9,8 +9,12 @@
 //    back off 2^n × 100 ms between tries (capped at 5 s). `installLoadRetry`
 //    turns it on. The engine retries any failure, a 404 included.
 //  - hand-made fetches (`AssetProgress.trackedFetch`): `withRetry` below, the
-//    same back-off, but a response that will not change — 404 and the other
-//    client errors apart from 408/429 — is thrown at once, the retries are
+//    same back-off. A response that should not change — 404 and the other
+//    client errors apart from 408/429 — gets ONE more try after the first
+//    back-off (the owner's insurance against an answer invented somewhere
+//    between the page and the bucket: the service worker never caches a 404
+//    and the worker sends one only for a key missing in R2, but one request
+//    200 ms later is cheap), then it is final; the full count of tries is
 //    for the network and the server (a throw from fetch, 5xx, 408, 429).
 //
 // A retry happens inside the download's LoadPool slot, so a flaky file keeps
@@ -20,6 +24,8 @@ import type * as pc from 'playcanvas';
 
 /** Tries per download, the first one included. */
 export const LOAD_ATTEMPTS = 5;
+/** Tries a download gets when the answer is a client error that should not change (404…): one repeat, then final. */
+export const PERMANENT_ATTEMPTS = 2;
 /** Back-off before try n (1-based retries): 2^n × 100 ms, as the engine does; capped. */
 const RETRY_BASE_MS = 100;
 const RETRY_CAP_MS = 5000;
@@ -44,9 +50,10 @@ export function isPermanentStatus(status: number): boolean {
 }
 
 /**
- * Runs `attempt` up to LOAD_ATTEMPTS times. A PermanentLoadError ends it at
- * once; anything else (a network throw, a server error the attempt turned
- * into an Error) waits the back-off and tries again.
+ * Runs `attempt` up to LOAD_ATTEMPTS times. A PermanentLoadError ends it
+ * after PERMANENT_ATTEMPTS tries; anything else (a network throw, a server
+ * error the attempt turned into an Error) waits the back-off and tries
+ * again up to the full count.
  */
 export async function withRetry<T>(attempt: () => Promise<T>, label: string, attempts = LOAD_ATTEMPTS): Promise<T> {
   let lastError: unknown;
@@ -55,7 +62,7 @@ export async function withRetry<T>(attempt: () => Promise<T>, label: string, att
       return await attempt();
     } catch (error) {
       lastError = error;
-      if (error instanceof PermanentLoadError || n === attempts) {
+      if ((error instanceof PermanentLoadError && n >= PERMANENT_ATTEMPTS) || n === attempts) {
         break;
       }
       const delay = retryDelayMs(n);
