@@ -19,11 +19,13 @@
 // Manifest keys are site paths under the asset root (`/maps/...`); the URLs
 // the loaders see carry that root (`/assets/maps/...` behind the worker, a
 // CDN host elsewhere), so `normalise` strips it. Downloads of both routes go
-// through LoadPool, a few at a time, so the bar moves as the bytes land.
+// through LoadPool, a few at a time, so the bar moves as the bytes land, and
+// each gets LoadRetry's tries before it fails.
 
 import { assetUrl } from '../tank/TankAssets';
 import * as pc from 'playcanvas';
 import { loadPool } from './LoadPool';
+import { isPermanentStatus, PermanentLoadError, withRetry } from './LoadRetry';
 
 export interface AssetGroup {
   bytes: number;
@@ -162,12 +164,14 @@ export class AssetProgress {
    * that crossed the wire. The bar runs optimistic rather than stalling.
    */
   trackedFetch(url: string): Promise<ArrayBuffer> {
-    return loadPool.run(() => this.fetchTracked(url));
+    return loadPool.run(() => withRetry(() => this.fetchTracked(url), url));
   }
 
   private async fetchTracked(url: string): Promise<ArrayBuffer> {
     const response = await fetch(url);
     if (!response.ok) {
+      // A missing file stays missing: no retry. A server error or a throttle gets another try (withRetry).
+      if (isPermanentStatus(response.status)) throw new PermanentLoadError(`HTTP ${response.status} for ${url}`, response.status);
       throw new Error(`HTTP ${response.status} for ${url}`);
     }
     const key = normalise(url);
