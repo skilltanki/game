@@ -190,9 +190,12 @@ export const HULL_BALANCE: Record<string, HullBalance> = {
 /**
  * Modification a tank mounts when the URL names none (?mod= / ?botMod=).
  * M3 is the top tier: the skins with the most detail work and the strongest
- * tables. The WEAPON damage tables (client and server alike) and the HULL
- * tables (getHullSpec: mass, speed, turn, HP) follow the modification;
- * weapon reload time and turret turn speed stay at their M0 values.
+ * tables. Everything the tables carry follows the modification, on the
+ * client and the server alike: weapon damage/heal, reload (and gauge
+ * refill), impact force and turret turn speed (resolveWeaponSpec, GameTank),
+ * and the hull's mass, speed, turn speed and HP (getHullSpec). What the
+ * tables do NOT carry per M (charge time, gauge drain, cone, range, shell
+ * speed, splash — identical across M for Thunder) keeps its tuned value.
  */
 export const DEFAULT_MODIFICATION = 'M3';
 

@@ -29,7 +29,7 @@ import type { SpawnPoint } from '../map/SpawnPoints';
 // multiplayer server imports too. Re-exported here so game code keeps its
 // import path.
 export { WEAPON_SPECS, type AnyWeaponSpec } from '../weapon/WeaponSpecs';
-import { WEAPON_SPECS, type AnyWeaponSpec } from '../weapon/WeaponSpecs';
+import { WEAPON_SPECS, type AnyWeaponSpec, type ResolvedWeaponSpec, resolveWeaponSpec } from '../weapon/WeaponSpecs';
 const DEFAULT_WEAPON_SPEC: AnyWeaponSpec = WEAPON_SPECS.Smoky;
 
 /** A spawn point with a tank closer than this is occupied (hull ~280 long). */
@@ -191,8 +191,11 @@ export interface GameTankOptions {
   paint?: string;
   /** Modification "M0".."M3": skin files, hull physics and the weapon's damage table (default DEFAULT_MODIFICATION). */
   modification?: string;
+  /** Absolute turret turn speed/acceleration (rad/s, rad/s²); omitted -> the weapon's table value at its modification. */
   turretRotationSpeed?: number;
   turretRotationAcceleration?: number;
+  /** Multiplier on the table turn speed (bots use 0.85 for a slower traverse). */
+  turretTurnScale?: number;
   weaponListener?: WeaponListener;
   /** Needed by splash/stream weapons to find area targets. */
   getAllTanks?: () => Tank[];
@@ -404,11 +407,24 @@ export class GameTank {
         ? { paintImage: options.assets.paints.get(options.paint)?.image }
         : {}),
     });
+    // The modification's numbers are resolved ONCE, in the module the server
+    // shares (resolveWeaponSpec), and handed to the weapon, so the weapon
+    // itself never has to know which M it is mounting.
+    const weaponSpec: ResolvedWeaponSpec = resolveWeaponSpec(options.turret, modification) ?? DEFAULT_WEAPON_SPEC;
+    // Turret traverse from the weapon's table (deg/s, per modification: a
+    // Railgun M3 turns at 97.4, a Freeze M3 at 196). The acceleration keeps
+    // the port's 2x ratio to the speed; the old flat 1.7 rad/s is the
+    // fallback for a turret without a table.
+    const tableTurnDeg = weaponSpec.modBalance?.turretTurnSpeed;
+    const turretRotationSpeed =
+      options.turretRotationSpeed ??
+      (tableTurnDeg != null ? (tableTurnDeg * Math.PI) / 180 : 1.7) * (options.turretTurnScale ?? 1);
+    const turretRotationAcceleration = options.turretRotationAcceleration ?? turretRotationSpeed * 2;
     const spec: TankSpec = {
       ...hullSpec,
       hullSize: skin.hullSize,
-      turretRotationSpeed: options.turretRotationSpeed ?? 1.7,
-      turretRotationAcceleration: options.turretRotationAcceleration ?? 3.4,
+      turretRotationSpeed,
+      turretRotationAcceleration,
     };
     const tank = new Tank(spec);
     tank.team = options.team;
@@ -446,15 +462,6 @@ export class GameTank {
     const turretBoxTransform = new Matrix4();
     turretBoxTransform.setPosition(new Vector3(skin.turretMount.x, skin.turretMount.y, (zTop + zBottom) / 2));
     tank.getBody().addCollisionShape(turretBox, turretBoxTransform);
-    const baseSpec = WEAPON_SPECS[options.turret] ?? DEFAULT_WEAPON_SPEC;
-    // Resolve the modification's balance here and hand it to the weapon, so
-    // the weapon itself never has to know which M it is mounting.
-    const balanceId = (baseSpec as { balance?: string }).balance;
-    const modBalance =
-      balanceId != null
-        ? WEAPON_MODS[balanceId]?.[modification] ?? WEAPON_BALANCE[balanceId]
-        : undefined;
-    const weaponSpec = modBalance != null ? { ...baseSpec, modBalance } : baseSpec;
     const detector = physicsScene.getCollisionDetector();
     const listener = options.weaponListener ?? null;
     // Kept by reference: the weapons hold this very object, so NetBattle can
@@ -602,6 +609,11 @@ export class GameTank {
   private weaponBalance?: string;
   /** Which modification (M0..M3) this tank mounts. */
   private modification = DEFAULT_MODIFICATION;
+
+  /** The modification this tank was built with (M0..M3). */
+  get modificationId(): string {
+    return this.modification;
+  }
 
   /**
    * This turret's balance for its modification. WEAPON_MODS carries M0..M3

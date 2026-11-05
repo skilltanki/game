@@ -36,6 +36,8 @@ export function splashCoeff(distance: number, splash: SplashSpec): number {
 // cannot type-check; TypeScript's structural typing keeps the two in lockstep —
 // a drifted field fails to compile at the weapon constructors in GameTank.
 
+import { WEAPON_BALANCE, WEAPON_MODS, type WeaponBalance } from './WeaponBalance';
+
 export interface HitscanSpecData {
   /** ms between shots (nextTime += reloadTime). */
   reloadTime: number;
@@ -192,3 +194,102 @@ export const WEAPON_SPECS: Record<string, AnyWeaponSpec> = {
     drainSeconds: 7, regenSeconds: 11.11, selfHealFraction: 0.3597,
   },
 };
+
+/**
+ * shots-data quotes stream damage as DAMAGE_PER_PERIOD over a 500 ms tick; the
+ * port runs a finer tick and scales to the same DPS (see the Firebird entry).
+ */
+const STREAM_PERIOD_MS = 500;
+
+/** A weapon spec with its modification's balance attached for the weapons' own rolls. */
+export type ResolvedWeaponSpec = AnyWeaponSpec & { modBalance?: WeaponBalance };
+
+/**
+ * The weapon spec for a modification — the ONE place both sides read it:
+ * GameTank hands the result to the weapon it builds, and the server's
+ * damage.ts mirrors the client's math from the same object, so a Firebird M3
+ * burns for the same per-tick amount on both ends.
+ *
+ * Per kind:
+ *  - hitscan / projectile: the modification's damage table rides along as
+ *    modBalance (the weapons roll from it; the M0 `damage` field is the
+ *    fallback for turrets without a table);
+ *  - stream: damagePerTick = DAMAGE_PER_PERIOD(mod) x tick / 500 ms, which
+ *    reproduces the hand-written M0 numbers exactly (41 x 160/500 = 13.12);
+ *    Isida's healPerTick comes from healFixed the same way and its vampirism
+ *    from selfHealPercent;
+ *  - shaft: the snap shot is the midpoint of the modification's range (the
+ *    M0 44 is (41+47)/2) and the aimed shot is aimingModeMaxDamage.
+ * The numbers the port TUNED by hand on top of the server's M0 data — reload
+ * (hitscan/projectile reloadTime, stream regenSeconds, Shaft rechargeMsFull)
+ * and impact/recoil force — scale by the table's ratio to M0, so M0 stays
+ * exactly as tuned and a Railgun M3 reloads in 5846 x 4.44/5.85 ms. Turrets
+ * whose table has no such number (Smoky/Twins reload, stream forces) keep
+ * the base. Turret turn speed is read off modBalance by GameTank. Charge
+ * time, gauge drain, cone, range and speed have no per-M data and stay.
+ */
+export function resolveWeaponSpec(turret: string, modification: string): ResolvedWeaponSpec | undefined {
+  const base = WEAPON_SPECS[turret];
+  if (base == null) {
+    return undefined;
+  }
+  const balanceId = base.balance;
+  const balance = balanceId != null ? WEAPON_MODS[balanceId]?.[modification] ?? WEAPON_BALANCE[balanceId] : undefined;
+  if (balance == null) {
+    return base;
+  }
+  // Tuned base numbers scale by the table's own progression against M0.
+  const m0 = balanceId != null ? WEAPON_MODS[balanceId]?.M0 ?? WEAPON_BALANCE[balanceId] : undefined;
+  const ratio = (pick: (b: WeaponBalance) => number | undefined): number => {
+    const from = m0 != null ? pick(m0) : undefined;
+    const to = pick(balance);
+    return from != null && to != null && from > 0 ? to / from : 1;
+  };
+  const reloadRatio = ratio((b) => b.reloadTime);
+  const forceRatio = ratio((b) => b.impactForce);
+  switch (base.kind) {
+    case 'hitscan':
+    case 'projectile':
+      return {
+        ...base,
+        reloadTime: base.reloadTime * reloadRatio,
+        impactForce: base.impactForce * forceRatio,
+        recoilForce: base.recoilForce * forceRatio,
+        modBalance: balance,
+      };
+    case 'stream': {
+      const perPeriod = balance.damage.fixed;
+      const damagePerTick = perPeriod != null ? (perPeriod * base.tickInterval) / STREAM_PERIOD_MS : base.damagePerTick;
+      const healPerTick =
+        base.healPerTick != null && balance.healFixed != null
+          ? (balance.healFixed * base.tickInterval) / STREAM_PERIOD_MS
+          : base.healPerTick;
+      const selfHealFraction = balance.selfHealPercent != null ? balance.selfHealPercent / 100 : base.selfHealFraction;
+      return {
+        ...base,
+        damagePerTick,
+        healPerTick,
+        selfHealFraction,
+        // The table's "reloadTime" for a stream is the gauge refill (13.35 s
+        // is the Firebird M0 regenSeconds verbatim).
+        regenSeconds: base.regenSeconds * reloadRatio,
+        impactForce: base.impactForce * forceRatio,
+        modBalance: balance,
+      };
+    }
+    case 'shaft': {
+      const range = balance.damage.range;
+      const quickDamage = range != null ? (range.from + range.to) / 2 : base.quickDamage;
+      const maxDamage = balance.aimingModeMaxDamage ?? base.maxDamage;
+      return {
+        ...base,
+        quickDamage,
+        maxDamage,
+        rechargeMsFull: base.rechargeMsFull * reloadRatio,
+        impactForce: base.impactForce * forceRatio,
+        recoilForce: base.recoilForce * forceRatio,
+        modBalance: balance,
+      };
+    }
+  }
+}

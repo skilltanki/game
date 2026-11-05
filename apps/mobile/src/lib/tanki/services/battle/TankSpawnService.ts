@@ -32,9 +32,8 @@ import { online } from '../../../online';
 import type ControlRegistryService from '../control/ControlRegistryService';
 
 /** Bots traverse their turret 15% slower than the player (original tuning). */
+/** The bot traverses its turret 15% slower than the player, so it needs a beat longer to bring the gun onto a moving target. */
 const BOT_TURRET_FACTOR = 0.85;
-const TURRET_SPEED = 1.7;
-const TURRET_ACCELERATION = 3.4;
 
 export class TankSpawnService {
   private readonly loggerService = inject<LoggerService>(TYPES.loggerService);
@@ -76,8 +75,8 @@ export class TankSpawnService {
       modification: descriptor.loadout.modification,
       team: descriptor.team,
       paint: descriptor.loadout.paint,
-      turretRotationSpeed: isBot ? TURRET_SPEED * BOT_TURRET_FACTOR : TURRET_SPEED,
-      turretRotationAcceleration: isBot ? TURRET_ACCELERATION * BOT_TURRET_FACTOR : TURRET_ACCELERATION,
+      // Turret traverse comes from the weapon table at the tank's modification (GameTank); the bot gets a slower one.
+      turretTurnScale: isBot ? BOT_TURRET_FACTOR : 1,
       weaponListener: this.combatService.listenerFor(descriptor.team, () => gameTank, descriptor.loadout.turret),
       getAllTanks: () => this.battleStateService.tanks(),
       ownTank: descriptor.control === 'touch',
