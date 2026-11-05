@@ -35,6 +35,10 @@
   `app.loader.enableRetry(4)` (встроенные ретраи PlayCanvas для текстур/звуков), `withRetry` для
   `trackedFetch` (4xx кроме 408/429 — одна повторная попытка, затем окончательно). Десктоп `withRetry` получает через `AssetProgress`,
   `installLoadRetry` в `main.ts` не подключён.
+- `weapon/ModPhysics.ts` (2026-11-05, GENERATED в `skilltanki` скриптом `packages/game/scripts/export-mod-physics.mjs`
+  из garage-данных оригинального сервера; сюда — копией, не генерацией): физика корпусов и башен по модификациям,
+  `BASE_IMPACT_FORCE`. Её читают `tank/HullSpecs.ts` (`getHullSpec`), `weapon/WeaponSpecs.ts` (силы) и `game/GameTank.ts`
+  (башня). Обновлять — перегенерировать в `skilltanki` и скопировать файл.
 - `weapon/WeaponSpecs.ts` — `resolveWeaponSpec(turret, mod)` (2026-11-05, из `skilltanki`, обе копии байт в байт):
   спека оружия с цифрами модификации — урон/лечение стрима, Shaft, перезарядка, силы, `modBalance`; `GameTank`
   строит оружие из неё и берёт скорость башни из таблицы (`turretTurnScale` для ботов). Оружия сами про M не знают.

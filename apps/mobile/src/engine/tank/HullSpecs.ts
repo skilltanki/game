@@ -8,15 +8,15 @@
 //   HULL_SPEED (m/s) -> maxSpeed (units/s, 1 m = 100),
 //   HULL_TURN_SPEED (deg/s) -> maxTurnSpeed (rad/s).
 //
-// Acceleration and suspension are NOT from the server: HULL_ACCELERATION is a
-// single scalar there (7..12) with no documented mapping onto this port's
-// four acceleration terms, so those stay as tuned.
+// The acceleration terms and damping BELOW were tuned by hand before the
+// server's per-modification `physics` block was found (ModPhysics.ts: the
+// four accelerations, damping and mass for every hull and M, exactly what
+// the original server sent the client on spawn). getHullSpec now reads that
+// block; this table remains the hull roster and the fallback for a hull or
+// modification the block does not cover.
 // Linear values in client units (1 m = 100 units), angular in rad/s.
-//
-// Modifications: HULL_MODS (WeaponBalance.ts) carries the same five server
-// numbers for M0..M3. getHullSpec(hull, mod) applies them on top of the M0
-// tuning below — see the function for which term follows which number.
 import { HULL_MODS } from '../weapon/WeaponBalance';
+import { HULL_PHYSICS } from '../weapon/ModPhysics';
 
 export interface HullPhysicsSpec {
   mass: number;
@@ -119,24 +119,41 @@ export const HULL_SPECS: Record<string, HullPhysicsSpec> = {
 };
 
 /**
- * Hull physics for a modification.
+ * Hull physics for a modification — the server's `physics` block verbatim.
  *
- * The M0 spec is the tuned base. For M1..M3 the server's own numbers replace
- * what they map onto directly — mass, top speed (m/s -> units/s), turn speed
- * (deg/s -> rad/s) and hit points — and the terms the server only has a
- * scalar for are scaled by that scalar's ratio to M0:
- *   - forward/reverse acceleration by HULL_ACCELERATION(mod) / (M0);
- *   - turn/reverse-turn acceleration by the turn-speed ratio;
- *   - side acceleration (track grip) is left alone;
- *   - suspension damping by the mass ratio: the spring coefficient is
- *     recomputed from the mass every tick (adjustSuspensionSpringCoeff), so
- *     scaling the damper the same way keeps the damping ratio, i.e. the same
- *     ride on a heavier hull.
- * Unknown hull or modification falls back to the M0 spec.
+ * HULL_PHYSICS carries, per hull and M, what the original server sent in
+ * InitTankData: speed (m/s -> units/s), turn speed (rad/s), the four
+ * acceleration terms (m/s^2 -> units/s^2; rad/s^2 as is), suspension
+ * damping (the AS3 SuspensionParams.dampingCoeff, as is) and mass. Hit
+ * points come from the garage table (HULL_MODS armor). This applies to M0
+ * too: the hand-tuned HULL_SPECS numbers were hotter than the original's
+ * (Hunter M0 accelerated at 13 m/s^2 here against the server's 9.09).
+ *
+ * Fallback, for a hull or M the block does not cover: the tuned M0 spec,
+ * with the garage table's numbers applied where they map directly and the
+ * rest scaled by the table's ratio to M0 (acceleration by HULL_ACCELERATION,
+ * turn terms by turn speed, damping by mass).
  */
 export function getHullSpec(hullName: string, modification = 'M0'): HullPhysicsSpec {
   const name = HULL_SPECS[hullName] != null ? hullName : 'Hunter';
   const base = HULL_SPECS[name];
+  const physics = HULL_PHYSICS[name]?.[modification];
+  const armor = HULL_MODS[name]?.[modification]?.armor;
+  if (physics != null) {
+    return {
+      ...base,
+      mass: physics.mass,
+      maxSpeed: physics.speed * 100,
+      maxTurnSpeed: physics.turnSpeed,
+      acceleration: physics.acceleration * 100,
+      reverseAcceleration: physics.reverseAcceleration * 100,
+      sideAcceleration: physics.sideAcceleration * 100,
+      turnAcceleration: physics.turnAcceleration,
+      reverseTurnAcceleration: physics.reverseTurnAcceleration,
+      suspensionDampingCoeff: physics.damping,
+      maxHealth: armor ?? base.maxHealth,
+    };
+  }
   const mod = HULL_MODS[name]?.[modification];
   const m0 = HULL_MODS[name]?.M0;
   if (mod == null || m0 == null || modification === 'M0') {

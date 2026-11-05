@@ -37,6 +37,7 @@ export function splashCoeff(distance: number, splash: SplashSpec): number {
 // a drifted field fails to compile at the weapon constructors in GameTank.
 
 import { WEAPON_BALANCE, WEAPON_MODS, type WeaponBalance } from './WeaponBalance';
+import { BASE_IMPACT_FORCE, WEAPON_PHYSICS } from './ModPhysics';
 
 export interface HitscanSpecData {
   /** ms between shots (nextTime += reloadTime). */
@@ -220,13 +221,19 @@ export type ResolvedWeaponSpec = AnyWeaponSpec & { modBalance?: WeaponBalance };
  *    from selfHealPercent;
  *  - shaft: the snap shot is the midpoint of the modification's range (the
  *    M0 44 is (41+47)/2) and the aimed shot is aimingModeMaxDamage.
- * The numbers the port TUNED by hand on top of the server's M0 data — reload
- * (hitscan/projectile reloadTime, stream regenSeconds, Shaft rechargeMsFull)
- * and impact/recoil force — scale by the table's ratio to M0, so M0 stays
- * exactly as tuned and a Railgun M3 reloads in 5846 x 4.44/5.85 ms. Turrets
- * whose table has no such number (Smoky/Twins reload, stream forces) keep
- * the base. Turret turn speed is read off modBalance by GameTank. Charge
- * time, gauge drain, cone, range and speed have no per-M data and stay.
+ * Impact and recoil: where the server's `physics` block exists for the
+ * turret and M (ModPhysics.WEAPON_PHYSICS), the force is the original's
+ * impactForce x BASE_IMPACT_FORCE and the recoil kickback x BASE_IMPACT_FORCE
+ * (WeaponCommonModel.as:48) — this replaces the port's hand-buffed forces for
+ * those entries, M0 included. Without a block (Shaft, Firebird, Freeze; the
+ * M0 of Isida/Thunder/Twins) the tuned base scales by the garage table's
+ * impactForce ratio to M0, or stays when there is none.
+ * Reload (hitscan/projectile reloadTime, stream regenSeconds, Shaft
+ * rechargeMsFull) scales by the table's reloadTime ratio to M0, so M0 stays
+ * as tuned and a Railgun M3 reloads in 5846 x 4.44/5.85 ms; Smoky and Twins
+ * have no table reload and keep the base. Turret turn speed/acceleration are
+ * read by GameTank (physics block, else table). Charge time, gauge drain,
+ * cone, range and speed have no per-M data and stay.
  */
 export function resolveWeaponSpec(turret: string, modification: string): ResolvedWeaponSpec | undefined {
   const base = WEAPON_SPECS[turret];
@@ -247,14 +254,18 @@ export function resolveWeaponSpec(turret: string, modification: string): Resolve
   };
   const reloadRatio = ratio((b) => b.reloadTime);
   const forceRatio = ratio((b) => b.impactForce);
+  const physics = WEAPON_PHYSICS[turret]?.[modification];
+  const impactForce = physics != null ? physics.impactForce * BASE_IMPACT_FORCE : base.impactForce * forceRatio;
+  const recoilForce =
+    physics != null && 'recoilForce' in base ? physics.kickback * BASE_IMPACT_FORCE : ('recoilForce' in base ? base.recoilForce * forceRatio : 0);
   switch (base.kind) {
     case 'hitscan':
     case 'projectile':
       return {
         ...base,
         reloadTime: base.reloadTime * reloadRatio,
-        impactForce: base.impactForce * forceRatio,
-        recoilForce: base.recoilForce * forceRatio,
+        impactForce,
+        recoilForce,
         modBalance: balance,
       };
     case 'stream': {
@@ -273,7 +284,7 @@ export function resolveWeaponSpec(turret: string, modification: string): Resolve
         // The table's "reloadTime" for a stream is the gauge refill (13.35 s
         // is the Firebird M0 regenSeconds verbatim).
         regenSeconds: base.regenSeconds * reloadRatio,
-        impactForce: base.impactForce * forceRatio,
+        impactForce,
         modBalance: balance,
       };
     }
@@ -286,8 +297,8 @@ export function resolveWeaponSpec(turret: string, modification: string): Resolve
         quickDamage,
         maxDamage,
         rechargeMsFull: base.rechargeMsFull * reloadRatio,
-        impactForce: base.impactForce * forceRatio,
-        recoilForce: base.recoilForce * forceRatio,
+        impactForce,
+        recoilForce,
         modBalance: balance,
       };
     }

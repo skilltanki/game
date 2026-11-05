@@ -30,6 +30,7 @@ import type { SpawnPoint } from '../map/SpawnPoints';
 // import path.
 export { WEAPON_SPECS, type AnyWeaponSpec } from '../weapon/WeaponSpecs';
 import { WEAPON_SPECS, type AnyWeaponSpec, type ResolvedWeaponSpec, resolveWeaponSpec } from '../weapon/WeaponSpecs';
+import { WEAPON_PHYSICS } from '../weapon/ModPhysics';
 const DEFAULT_WEAPON_SPEC: AnyWeaponSpec = WEAPON_SPECS.Smoky;
 
 /** A spawn point with a tank closer than this is occupied (hull ~280 long). */
@@ -411,15 +412,19 @@ export class GameTank {
     // shares (resolveWeaponSpec), and handed to the weapon, so the weapon
     // itself never has to know which M it is mounting.
     const weaponSpec: ResolvedWeaponSpec = resolveWeaponSpec(options.turret, modification) ?? DEFAULT_WEAPON_SPEC;
-    // Turret traverse from the weapon's table (deg/s, per modification: a
-    // Railgun M3 turns at 97.4, a Freeze M3 at 196). The acceleration keeps
-    // the port's 2x ratio to the speed; the old flat 1.7 rad/s is the
-    // fallback for a turret without a table.
+    // Turret traverse exactly as the original server sent it (ModPhysics:
+    // turretRotationSpeed rad/s and turretTurnAcceleration rad/s^2 per M).
+    // Without a physics block the garage table's deg/s is used with the
+    // port's 2x acceleration ratio; the old flat 1.7 rad/s is the last resort.
+    const turretPhysics = WEAPON_PHYSICS[options.turret]?.[modification];
     const tableTurnDeg = weaponSpec.modBalance?.turretTurnSpeed;
+    const turnScale = options.turretTurnScale ?? 1;
     const turretRotationSpeed =
       options.turretRotationSpeed ??
-      (tableTurnDeg != null ? (tableTurnDeg * Math.PI) / 180 : 1.7) * (options.turretTurnScale ?? 1);
-    const turretRotationAcceleration = options.turretRotationAcceleration ?? turretRotationSpeed * 2;
+      (turretPhysics?.turretRotationSpeed ?? (tableTurnDeg != null ? (tableTurnDeg * Math.PI) / 180 : 1.7)) * turnScale;
+    const turretRotationAcceleration =
+      options.turretRotationAcceleration ??
+      (turretPhysics != null ? turretPhysics.turretTurnAcceleration * turnScale : turretRotationSpeed * 2);
     const spec: TankSpec = {
       ...hullSpec,
       hullSize: skin.hullSize,
