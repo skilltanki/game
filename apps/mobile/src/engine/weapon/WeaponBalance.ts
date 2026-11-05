@@ -187,6 +187,15 @@ export const HULL_BALANCE: Record<string, HullBalance> = {
 // The port does NOT gate these behind ranks or purchases — there is no
 // progression here by design — they are simply selectable via ?mod=.
 
+/**
+ * Modification a tank mounts when the URL names none (?mod= / ?botMod=).
+ * M3 is the top tier: the skins with the most detail work and the strongest
+ * tables. The WEAPON damage tables (client and server alike) and the HULL
+ * tables (getHullSpec: mass, speed, turn, HP) follow the modification;
+ * weapon reload time and turret turn speed stay at their M0 values.
+ */
+export const DEFAULT_MODIFICATION = 'M3';
+
 /** Per-modification weapon balance (M0..M3), from the same server data. */
 export const WEAPON_MODS: Record<string, Record<string, WeaponBalance>> = {
   Firebird: {

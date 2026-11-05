@@ -6,7 +6,7 @@ import { Matrix3 } from '../math/Matrix3';
 import { Matrix4 } from '../math/Matrix4';
 import { Quaternion } from '../math/Quaternion';
 import { Vector3 } from '../math/Vector3';
-import { WEAPON_BALANCE, WEAPON_MODS, type WeaponBalance } from '../weapon/WeaponBalance';
+import { DEFAULT_MODIFICATION, WEAPON_BALANCE, WEAPON_MODS, type WeaponBalance } from '../weapon/WeaponBalance';
 import { PhysicsMaterial } from '../physics/PhysicsMaterial';
 import { CollisionBox } from '../physics/collision/primitives/CollisionBox';
 import { CollisionGroup } from '../tank/CollisionGroup';
@@ -189,7 +189,7 @@ export interface GameTankOptions {
    * bots and team play use.
    */
   paint?: string;
-  /** Visual modification "M0".."M3" (default M0). */
+  /** Modification "M0".."M3": skin files, hull physics and the weapon's damage table (default DEFAULT_MODIFICATION). */
   modification?: string;
   turretRotationSpeed?: number;
   turretRotationAcceleration?: number;
@@ -392,8 +392,9 @@ export class GameTank {
     physicsScene: TankPhysicsScene,
     options: GameTankOptions,
   ): Promise<GameTank> {
-    const hullSpec = getHullSpec(options.hull);
-    const modification = options.modification ?? 'M0';
+    const modification = options.modification ?? DEFAULT_MODIFICATION;
+    // Hull physics follow the modification too (mass, speed, turn, HP).
+    const hullSpec = getHullSpec(options.hull, modification);
     const skin = await loadTankSkin(app, {
       hull: resolvePart(options.assets.hulls, 'hull', options.hull, modification),
       turret: resolvePart(options.assets.turrets, 'turret', options.turret, modification),
@@ -600,7 +601,7 @@ export class GameTank {
   /** WEAPON_BALANCE key for this turret, for its vertical arc. */
   private weaponBalance?: string;
   /** Which modification (M0..M3) this tank mounts. */
-  private modification = 'M0';
+  private modification = DEFAULT_MODIFICATION;
 
   /**
    * This turret's balance for its modification. WEAPON_MODS carries M0..M3

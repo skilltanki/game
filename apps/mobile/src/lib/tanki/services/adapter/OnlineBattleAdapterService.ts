@@ -18,6 +18,7 @@ import { applyDamageLocally, setDamageApplier, type DamageReport } from '../../.
 import type { GameTank } from '../../../../engine/game/GameTank';
 import type { Tank } from '../../../../engine/tank/Tank';
 import { WEAPON_SPECS } from '../../../../engine/weapon/WeaponSpecs';
+import { WEAPON_BALANCE, type WeaponBalance } from '../../../../engine/weapon/WeaponBalance';
 import type { BattleBridge, DamageClaim, DamageVerdict, FlagEventInfo, WeaponLimits } from '../../../../model/online/BattleBridge';
 import type { OnlineSeat, ScoreRowWire, WirePose, WireVec3 } from '../../../../model/online/wire';
 import type { TankCommand } from '../../../../model/TankCommand';
@@ -37,6 +38,7 @@ import type CombatService from '../battle/CombatService';
 import type EffectsService from '../battle/EffectsService';
 import type FlagModeService from '../mode/FlagModeService';
 import type ControlRegistryService from '../control/ControlRegistryService';
+import { CC_DEFAULT_MODIFICATION } from '../../../../config/params';
 
 export class OnlineBattleAdapterService implements BattleBridge {
   private readonly loggerService = inject<LoggerService>(TYPES.loggerService);
@@ -121,22 +123,36 @@ export class OnlineBattleAdapterService implements BattleBridge {
 
   public turretOf = (id: string): string => this.gameTank(id).turretName;
 
-  /** The weapon's balance figures with slack: a gaussian roll tops out above `damage`, poses lag the shooter by a step or two. */
+  /**
+   * The weapon's balance figures with slack: a gaussian roll tops out above
+   * `damage`, poses lag the shooter by a step or two. The figures are the
+   * tank's MODIFICATION's (`balanceProfile()`, M0–M3): WEAPON_SPECS carries
+   * the M0 numbers, and an M3 Railgun (133–199) checked against the M0 cap
+   * (87 × 1.35) would have every honest hit clamped.
+   */
   public weaponLimits = (id: string): WeaponLimits => {
     const gt = this.gameTank(id);
     const spec = WEAPON_SPECS[gt.turretName];
     const buff = Math.max(1, gt.tank.outgoingDamageMultiplier);
     const ROLL = 1.35;
     if (spec == null) return { maxPerHit: 300 * buff, minIntervalMs: 100, maxRange: Infinity, multiTarget: true, selfHealFraction: 0 };
+    const mod = gt.balanceProfile();
+    const base = spec.balance != null ? WEAPON_BALANCE[spec.balance] : undefined;
+    // The modification's nominal damage over M0's: the spec numbers are M0's, scaled the way the weapons scale theirs.
+    const scale = mod != null && base != null ? nominalDamage(mod) / nominalDamage(base) : 1;
     switch (spec.kind) {
       case 'hitscan':
-        return { maxPerHit: spec.damage * ROLL * buff, minIntervalMs: spec.reloadTime * 0.7, maxRange: spec.maxRange ?? Infinity, multiTarget: true, selfHealFraction: 0 };
+        return { maxPerHit: spec.damage * scale * ROLL * buff, minIntervalMs: spec.reloadTime * 0.7, maxRange: spec.maxRange ?? Infinity, multiTarget: true, selfHealFraction: 0 };
       case 'projectile':
-        return { maxPerHit: spec.damage * ROLL * buff, minIntervalMs: spec.reloadTime * 0.7, maxRange: spec.maxRange, multiTarget: spec.splash != null, selfHealFraction: 0 };
-      case 'stream':
-        return { maxPerHit: Math.max(spec.damagePerTick, spec.healPerTick ?? 0) * ROLL * buff, minIntervalMs: spec.tickInterval * 0.7, maxRange: spec.maxRange, multiTarget: true, selfHealFraction: spec.selfHealFraction ?? 0 };
-      case 'shaft':
-        return { maxPerHit: spec.maxDamage * ROLL * buff, minIntervalMs: 250, maxRange: Infinity, multiTarget: true, selfHealFraction: 0 };
+        return { maxPerHit: spec.damage * scale * ROLL * buff, minIntervalMs: spec.reloadTime * 0.7, maxRange: spec.maxRange, multiTarget: spec.splash != null, selfHealFraction: 0 };
+      case 'stream': {
+        const healScale = mod?.healFixed != null && base?.healFixed != null ? mod.healFixed / base.healFixed : scale;
+        return { maxPerHit: Math.max(spec.damagePerTick * scale, (spec.healPerTick ?? 0) * healScale) * ROLL * buff, minIntervalMs: spec.tickInterval * 0.7, maxRange: spec.maxRange, multiTarget: true, selfHealFraction: spec.selfHealFraction ?? 0 };
+      }
+      case 'shaft': {
+        const aimed = mod?.aimingModeMaxDamage ?? spec.maxDamage;
+        return { maxPerHit: aimed * ROLL * buff, minIntervalMs: 250, maxRange: Infinity, multiTarget: true, selfHealFraction: 0 };
+      }
     }
   };
 
@@ -354,7 +370,7 @@ export class OnlineBattleAdapterService implements BattleBridge {
       id: seat.peerId,
       name: seat.name,
       team: teams ? (seat.team ?? 'red') : 'dm',
-      loadout: { hull: seat.hull, turret: seat.turret, paint: seat.paint ?? undefined, modification: 'M0' },
+      loadout: { hull: seat.hull, turret: seat.turret, paint: seat.paint ?? undefined, modification: CC_DEFAULT_MODIFICATION },
       control: 'remote',
     });
     const spawns = this.battleStateService.mapStage.spawnPoints;
@@ -439,6 +455,14 @@ function r(value: number): number {
 
 function r4(value: number): number {
   return Math.round(value * 10000) / 10000;
+}
+
+/** A balance table's nominal hit: the fixed figure or the middle of the roll range — what the M0 WEAPON_SPECS numbers are. */
+function nominalDamage(balance: WeaponBalance): number {
+  const { fixed, range } = balance.damage;
+  if (fixed != null) return fixed;
+  if (range != null) return (range.from + range.to) / 2;
+  return 1;
 }
 
 export default OnlineBattleAdapterService;

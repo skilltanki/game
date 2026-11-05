@@ -115,6 +115,20 @@ export class StreamWeapon implements Weapon {
     this.healing = false;
   }
 
+  /**
+   * The modification's fixed figure over M0's (WEAPON_BALANCE, which the
+   * spec's per-tick numbers are calibrated to): 1 without a balance table.
+   */
+  private modificationScale(kind: 'damage' | 'heal'): number {
+    const mod = (this.spec as { modBalance?: WeaponBalance }).modBalance;
+    const base = this.spec.balance != null ? WEAPON_BALANCE[this.spec.balance] : undefined;
+    if (mod == null || base == null || mod === base) return 1;
+    const pick = (b: WeaponBalance): number | undefined => (kind === 'heal' ? b.healFixed ?? b.damage.fixed : b.damage.fixed);
+    const top = pick(mod);
+    const bottom = pick(base);
+    return top != null && bottom != null && bottom > 0 ? top / bottom : 1;
+  }
+
   update(timeMs: number, getMuzzle: (out: Vector3) => void, getDirection: (out: Vector3) => void): void {
     const wantsFire = this.triggerPressed && !this.owner.isDead() && !this.overheated && this.energy > 0;
     if (wantsFire) {
@@ -189,17 +203,19 @@ export class StreamWeapon implements Weapon {
         // HEALING: no impact force and no damage — just restore hp. Routed
         // through the DamageSink so the server applier can own it too.
         if (tank.health < tank.maxHealth) {
-          dealDamage({ source: this.owner, target: tank, amount: this.spec.healPerTick!, heal: true, at: this.rayHit.position });
+          dealDamage({ source: this.owner, target: tank, amount: this.spec.healPerTick! * this.modificationScale('heal'), heal: true, at: this.rayHit.position });
         }
         healedAnyone = true;
         result.hits.push({ tank, position: this.rayHit.position.clone(), lethal: false });
         continue;
       }
       // Fixed per-tick damage, faded by range: Firebird and Freeze both carry
-      // a weakening curve (full damage to 5 m, halved past ~24 m).
+      // a weakening curve (full damage to 5 m, halved past ~24 m). The spec's
+      // per-tick figure is the port's M0 calibration; the modification scales
+      // it by its fixed damage over M0's (Firebird M3 72 / M0 41).
       const balance = (this.spec as { modBalance?: WeaponBalance }).modBalance
       ?? (this.spec.balance != null ? WEAPON_BALANCE[this.spec.balance] : undefined);
-      let damage = this.spec.damagePerTick;
+      let damage = this.spec.damagePerTick * this.modificationScale('damage');
       if (balance?.damage.weakening != null) {
         const distance = this.rayHit.position.distanceTo(this._muzzle) / UNITS_PER_METER;
         damage *= weakeningMultiplier(balance.damage.weakening, distance);

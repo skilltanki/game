@@ -5,6 +5,7 @@
 // leaves it on globalThis.__bench for a script to read.
 import type { BattleConfig, BattleModeId, BotDifficulty } from '../model/BattleConfig';
 import type { BenchConfig } from '../model/engine/Bench';
+import { CC_DEFAULT_MODIFICATION } from '../config/params';
 
 const POLL_MS = 250;
 /** Dev server file log (vite.config.ts benchLogPlugin): a heartbeat this often, and the report at the end. */
@@ -45,7 +46,7 @@ export async function runBench(config: BenchConfig, canvas: HTMLCanvasElement, u
     mode: config.mode,
     mapId: config.mapId,
     playerName: 'Bench',
-    loadout: { hull: 'Hunter', turret: 'Smoky', modification: 'M0' },
+    loadout: { hull: 'Hunter', turret: 'Smoky', modification: CC_DEFAULT_MODIFICATION },
     team: 'red',
     bots: config.bots,
     botDifficulty: config.difficulty,
@@ -135,7 +136,7 @@ export async function runNavBench(mapIds: string[], canvas: HTMLCanvasElement, u
       mode: 'ctf',
       mapId,
       playerName: 'Bench',
-      loadout: { hull: 'Hunter', turret: 'Smoky', modification: 'M0' },
+      loadout: { hull: 'Hunter', turret: 'Smoky', modification: CC_DEFAULT_MODIFICATION },
       team: 'red',
       bots: 0,
       botDifficulty: 'normal',

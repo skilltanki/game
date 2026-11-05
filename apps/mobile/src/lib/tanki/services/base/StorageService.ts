@@ -1,4 +1,4 @@
-import { CC_DEFAULT_BOTS, CC_DEFAULT_HULL, CC_DEFAULT_MAP, CC_DEFAULT_TURRET, CC_STORAGE_PREFIX } from '../../../../config/params';
+import { CC_DEFAULT_BOTS, CC_DEFAULT_HULL, CC_DEFAULT_MAP, CC_DEFAULT_MODIFICATION, CC_DEFAULT_TURRET, CC_STORAGE_PREFIX } from '../../../../config/params';
 import type { BattleModeId, BotDifficulty, TeamSide } from '../../../../model/BattleConfig';
 import type { PlaySide } from '../../../../model/Lobby';
 import type { QualityPreset } from './GraphicsQualityService';
@@ -35,7 +35,7 @@ const DEFAULT_PROFILE: PlayerProfile = {
   name: 'Player',
   hull: CC_DEFAULT_HULL,
   turret: CC_DEFAULT_TURRET,
-  modification: 'M0',
+  modification: CC_DEFAULT_MODIFICATION,
   mode: 'dm',
   mapId: CC_DEFAULT_MAP,
   bots: CC_DEFAULT_BOTS,
@@ -62,7 +62,8 @@ export class StorageService {
     }
   };
 
-  public getProfile = (): PlayerProfile => ({ ...DEFAULT_PROFILE, ...this.read<Partial<PlayerProfile>>('profile', {}) });
+  /** Stored choices over the defaults; the modification is the game's (CC_DEFAULT_MODIFICATION), whatever an older profile saved. */
+  public getProfile = (): PlayerProfile => ({ ...DEFAULT_PROFILE, ...this.read<Partial<PlayerProfile>>('profile', {}), modification: CC_DEFAULT_MODIFICATION });
 
   public saveProfile = (patch: Partial<PlayerProfile>): PlayerProfile => {
     const next = { ...this.getProfile(), ...patch };

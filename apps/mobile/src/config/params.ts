@@ -1,6 +1,7 @@
 // Build-time parameters of the mobile client. Everything that differs
 // between dev, PWA and the future Capacitor build is read here and nowhere
 // else (mirrors the config/params.ts convention of the backend libs).
+import { DEFAULT_MODIFICATION } from '../engine/weapon/WeaponBalance';
 
 /**
  * Where the long tail of game assets lives: /assets/ on the page's own
@@ -24,6 +25,12 @@ export const CC_PHYSICS_STEP_MS = 33;
 /** Default loadout for a first launch. */
 export const CC_DEFAULT_HULL = 'Hunter';
 export const CC_DEFAULT_TURRET = 'Smoky';
+/**
+ * The hull/turret modification every tank wears (M0–M3: the part's model, skin and weapon table).
+ * Not a player choice — no garage control — so it is the game's, not the profile's: the engine's
+ * DEFAULT_MODIFICATION (WeaponBalance.ts, the same constant the desktop client uses), re-exported.
+ */
+export const CC_DEFAULT_MODIFICATION: string = DEFAULT_MODIFICATION;
 export const CC_DEFAULT_MAP = 'abyss_old_summer';
 /**
  * Bots in a single-player battle: five by default (the field feels like a

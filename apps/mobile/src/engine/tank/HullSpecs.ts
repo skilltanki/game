@@ -12,6 +12,11 @@
 // single scalar there (7..12) with no documented mapping onto this port's
 // four acceleration terms, so those stay as tuned.
 // Linear values in client units (1 m = 100 units), angular in rad/s.
+//
+// Modifications: HULL_MODS (WeaponBalance.ts) carries the same five server
+// numbers for M0..M3. getHullSpec(hull, mod) applies them on top of the M0
+// tuning below — see the function for which term follows which number.
+import { HULL_MODS } from '../weapon/WeaponBalance';
 
 export interface HullPhysicsSpec {
   mass: number;
@@ -113,8 +118,45 @@ export const HULL_SPECS: Record<string, HullPhysicsSpec> = {
   },
 };
 
-export function getHullSpec(hullName: string): HullPhysicsSpec {
-  return HULL_SPECS[hullName] ?? HULL_SPECS.Hunter;
+/**
+ * Hull physics for a modification.
+ *
+ * The M0 spec is the tuned base. For M1..M3 the server's own numbers replace
+ * what they map onto directly — mass, top speed (m/s -> units/s), turn speed
+ * (deg/s -> rad/s) and hit points — and the terms the server only has a
+ * scalar for are scaled by that scalar's ratio to M0:
+ *   - forward/reverse acceleration by HULL_ACCELERATION(mod) / (M0);
+ *   - turn/reverse-turn acceleration by the turn-speed ratio;
+ *   - side acceleration (track grip) is left alone;
+ *   - suspension damping by the mass ratio: the spring coefficient is
+ *     recomputed from the mass every tick (adjustSuspensionSpringCoeff), so
+ *     scaling the damper the same way keeps the damping ratio, i.e. the same
+ *     ride on a heavier hull.
+ * Unknown hull or modification falls back to the M0 spec.
+ */
+export function getHullSpec(hullName: string, modification = 'M0'): HullPhysicsSpec {
+  const name = HULL_SPECS[hullName] != null ? hullName : 'Hunter';
+  const base = HULL_SPECS[name];
+  const mod = HULL_MODS[name]?.[modification];
+  const m0 = HULL_MODS[name]?.M0;
+  if (mod == null || m0 == null || modification === 'M0') {
+    return base;
+  }
+  const accelerationRatio = mod.acceleration / m0.acceleration;
+  const turnRatio = mod.turnSpeed / m0.turnSpeed;
+  const massRatio = mod.mass / m0.mass;
+  return {
+    ...base,
+    mass: mod.mass,
+    maxSpeed: mod.speed * 100,
+    maxTurnSpeed: (mod.turnSpeed * Math.PI) / 180,
+    maxHealth: mod.armor,
+    acceleration: base.acceleration * accelerationRatio,
+    reverseAcceleration: base.reverseAcceleration * accelerationRatio,
+    turnAcceleration: base.turnAcceleration * turnRatio,
+    reverseTurnAcceleration: base.reverseTurnAcceleration * turnRatio,
+    suspensionDampingCoeff: base.suspensionDampingCoeff * massRatio,
+  };
 }
 
 /**

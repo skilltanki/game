@@ -35,6 +35,10 @@
   `app.loader.enableRetry(4)` (встроенные ретраи PlayCanvas для текстур/звуков), `withRetry` для
   `trackedFetch` (4xx кроме 408/429 — одна повторная попытка, затем окончательно). Десктоп `withRetry` получает через `AssetProgress`,
   `installLoadRetry` в `main.ts` не подключён.
+- `weapon/StreamWeapon.ts` + `weapon/ShaftWeapon.ts` (2026-11-05, в обеих копиях, в `skilltanki` пока нет) — урон
+  следует модификации: стрим масштабирует `damagePerTick`/`healPerTick` по `fixed`/`healFixed` таблицы к M0,
+  Shaft катит быстрый выстрел из диапазона таблицы и целится до `aimingModeMaxDamage`. Раньше оба брали
+  M0-цифры из `WeaponSpecs`, а `modBalance` давал только ослабление по дистанции.
 
 Не скопировано (заменено сервисами `lib/tanki`): `main.ts`, `logic/startBattle.ts`,
 `logic/battleLoop.ts`, `game/Menu.ts`, `game/Hud.ts`, `game/BotController.ts`,

@@ -9,6 +9,8 @@ import { Vector3 } from '../math/Vector3';
 import { dealDamage } from './DamageSink';
 import { RayHit } from '../physics/collision/types/RayHit';
 import { MathUtils } from '../tank/MathUtils';
+import { rollBaseDamage } from './DamageModel';
+import { WEAPON_BALANCE, type WeaponBalance } from './WeaponBalance';
 import type { Body } from '../physics/Body';
 import type { IRayCollisionFilter } from '../physics/collision/filters';
 import type { Tank } from '../tank/Tank';
@@ -214,13 +216,20 @@ export class ShaftWeapon implements Weapon {
       this.aimedShot = heldMs >= SWITCH_INTERVAL_MS && charge >= this.spec.quickCost;
       this.aiming = false;
       this.readyTime = timeMs + MIN_SHOT_PAUSE_MS;
+      // The modification's table (M0–M3): the quick shot rolls the balance's
+      // range (the spec's quickDamage is M0's middle), the aimed shot tops out
+      // at its aimingModeMaxDamage (Shaft M3 280 against the spec's M0 174).
+      const balance = (this.spec as { modBalance?: WeaponBalance }).modBalance
+        ?? (this.spec.balance != null ? WEAPON_BALANCE[this.spec.balance] : undefined);
+      const quick = balance != null ? rollBaseDamage(balance.damage) : this.spec.quickDamage;
+      const aimedMax = balance?.aimingModeMaxDamage ?? this.spec.maxDamage;
       let damage: number;
       if (heldMs < SWITCH_INTERVAL_MS || charge < this.spec.quickCost) {
-        damage = this.spec.quickDamage;
+        damage = quick;
         this.lastShotCharge = 0;
         this.energy = Math.max(0, this.energy - this.spec.quickCost);
       } else {
-        damage = this.spec.quickDamage + (this.spec.maxDamage - this.spec.quickDamage) * charge;
+        damage = quick + (aimedMax - quick) * charge;
         this.lastShotCharge = charge;
         this.energy = Math.max(0, this.energy - charge);
       }

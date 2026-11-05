@@ -9,6 +9,7 @@ import type { OnlineSeat } from '../../../../model/online/wire';
 import { inject } from '../../core/di';
 import TYPES from '../../core/types';
 import type AssetCatalogService from '../asset/AssetCatalogService';
+import { CC_DEFAULT_MODIFICATION } from '../../../../config/params';
 
 /** Loadouts cycled through the bots, so a crowded field is not seven Mammoths. */
 const BOT_HULLS = ['Mammoth', 'Hunter', 'Viking', 'Titan', 'Hornet', 'Dictator', 'Wasp'];
@@ -74,7 +75,7 @@ export class ModeRuleService {
         id: `bot${i + 1}`,
         name: names[i % names.length] + (i >= names.length ? ` ${Math.floor(i / names.length) + 1}` : ''),
         team,
-        loadout: { hull: pickHull(i), turret: pickTurret(i), modification: 'M0' },
+        loadout: { hull: pickHull(i), turret: pickTurret(i), modification: CC_DEFAULT_MODIFICATION },
         control: 'bot',
         difficulty: enemySide ? (config.enemyBotDifficulty ?? config.botDifficulty) : config.botDifficulty,
       });
@@ -137,7 +138,7 @@ export class ModeRuleService {
         id: seat.peerId,
         name: seat.name,
         team,
-        loadout: local ? config.loadout : { hull: seat.hull, turret: seat.turret, paint: seat.paint ?? undefined, modification: 'M0' },
+        loadout: local ? config.loadout : { hull: seat.hull, turret: seat.turret, paint: seat.paint ?? undefined, modification: CC_DEFAULT_MODIFICATION },
         // A bot's brain runs where its owner sits; everywhere else it is a replica of that machine's stream.
         control: local ? 'touch' : bot && seat.owner === online.localPeerId ? 'bot' : 'remote',
         difficulty: bot ? online.botDifficulty : undefined,
