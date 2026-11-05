@@ -124,8 +124,19 @@ async function loadImage(url: string): Promise<HTMLImageElement> {
 }
 
 /**
- * Original TextureConstructor composition: paint color under the greyscale
- * lightmap (multiply), then the details overlay (tracks/wheels) by alpha.
+ * Port of TankSkinPartCacheItem.createTexture (the tank skin, NOT the prop
+ * TextureConstructor): an opaque bitmap filled with the paint as a tiled
+ * bitmap fill, the lightmap drawn over it with BlendMode.HARDLIGHT, then the
+ * details drawn with plain alpha.
+ *
+ * HARD LIGHT, not multiply. Hard light is keyed on the lightmap: mid-grey
+ * leaves the paint as it is, dark texels multiply, bright ones screen. The
+ * tank lightmaps are mostly mid-grey with dark creases and bright edges, so
+ * the paint keeps its colour. Multiply darkened everything by the lightmap
+ * — the Firebird M3 turret came out as a dark grey block (composed texture
+ * mean luma 44/255) with the yellow paint invisible on it and its dark
+ * detail plates lost against the body. Canvas 'hard-light' uses the same
+ * source-keyed formula as Flash.
  */
 function composeSkinTexture(
   app: pc.AppBase,
@@ -147,7 +158,7 @@ function composeSkinTexture(
     ctx.fillStyle = paintColor;
   }
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.globalCompositeOperation = 'multiply';
+  ctx.globalCompositeOperation = 'hard-light';
   ctx.drawImage(lightmap, 0, 0, canvas.width, canvas.height);
   ctx.globalCompositeOperation = 'source-over';
   ctx.drawImage(details, 0, 0, canvas.width, canvas.height);
